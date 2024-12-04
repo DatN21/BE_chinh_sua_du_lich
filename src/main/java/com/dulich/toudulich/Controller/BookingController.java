@@ -59,6 +59,7 @@ public class BookingController {
                 .build());
     }
 
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getBookingById(@PathVariable("id") int bookingId){
         try {

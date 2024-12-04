@@ -9,9 +9,12 @@ import com.dulich.toudulich.Repositories.TourRepository;
 import com.dulich.toudulich.enums.Status;
 import com.dulich.toudulich.enums.TourType;
 import com.dulich.toudulich.responses.TourResponse;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,7 +26,6 @@ import java.util.stream.Collectors;
 public class TourService implements iTourService {
     private final TourRepository tourRepository;
     private final TourImageRepository tourImageRepository;
-
 
     @Override
     public TourModel createTour(TourDTO tourDTO) throws Exception {
@@ -126,19 +128,26 @@ public class TourService implements iTourService {
 
     @Override
     public TourImageModel createTourImage(int tourId, TourImageDTO tourImageDTO) throws Exception {
+        // Kiểm tra tồn tại tour
         TourModel existingTourModel = tourRepository.findById(tourId)
-                .orElseThrow(() -> new Exception("Cannot find category with id: " + tourImageDTO.getTourId())
-                );
+                .orElseThrow(() -> new EntityNotFoundException("Cannot find tour with id: " + tourId));
+
+        // Kiểm tra số lượng ảnh
+        int size = tourImageRepository.countByTourModel_Id(tourId);
+        if (size >= TourImageModel.MAXIMUM_IMAGE_P_PRODUCT) {
+            throw new IllegalArgumentException("Maximum number of images per tour is " + TourImageModel.MAXIMUM_IMAGE_P_PRODUCT);
+        }
+
+        // Tạo mới đối tượng TourImageModel
         TourImageModel newTourImage = TourImageModel.builder()
                 .tourModel(existingTourModel)
                 .imageUrl(tourImageDTO.getImgUrl())
                 .build();
-        int size = tourImageRepository.findByTourModel(existingTourModel).size();
-        if (size >= TourImageModel.MAXIMUM_IMAGE_P_PRODUCT) {
-            throw new Exception("Number of image <=" + TourImageModel.MAXIMUM_IMAGE_P_PRODUCT);
-        }
+
+        // Lưu vào DB
         return tourImageRepository.save(newTourImage);
     }
+
 
 
     @Override
@@ -146,11 +155,25 @@ public class TourService implements iTourService {
         return tourRepository.existsByTourName(tourName);
     }
 
-    //Xử lý ảnh
-    public List<TourImageDTO> getImagesByTourId(Integer tourId) {
+    @Override
+    public Page<TourImageDTO> getImagesByTourId(Integer tourId, Pageable pageable) {
+        // Lấy danh sách các TourImageModel từ cơ sở dữ liệu
         List<TourImageModel> images = tourImageRepository.findByTourModel_Id(tourId);
-        return images.stream().map(this::mapToDTO).collect(Collectors.toList());
+
+        // Chuyển đổi danh sách TourImageModel sang TourImageDTO
+        List<TourImageDTO> imageDTOs = images.stream()
+                .map(image -> new TourImageDTO(image.getId(), image.getTourModel().getId(),image.getImageUrl()))
+                .collect(Collectors.toList());
+
+        // Tạo đối tượng Page từ danh sách imageDTOs
+        int start = Math.min((int) pageable.getOffset(), imageDTOs.size());
+        int end = Math.min((start + pageable.getPageSize()), imageDTOs.size());
+        List<TourImageDTO> paginatedList = imageDTOs.subList(start, end);
+
+        return new PageImpl<>(paginatedList, pageable, imageDTOs.size());
     }
+
+    //Xử lý ảnh
 
     // Xoá một ảnh theo ID
     public void deleteImage(Integer id) {
@@ -171,6 +194,7 @@ public class TourService implements iTourService {
         dto.setTourId(image.getTourModel().getId());
         return dto;
     }
+
 }
 
 

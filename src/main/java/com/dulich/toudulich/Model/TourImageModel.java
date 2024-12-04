@@ -12,7 +12,7 @@ import lombok.*;
 @Builder
 @Table(name = "tour_image")
 public class TourImageModel {
-    public static final int MAXIMUM_IMAGE_P_PRODUCT = 5;
+    public static final int MAXIMUM_IMAGE_P_PRODUCT = 10;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id ;

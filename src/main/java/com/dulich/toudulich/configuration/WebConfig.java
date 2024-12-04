@@ -55,9 +55,16 @@ public class WebConfig  {
                             .requestMatchers(HttpMethod.POST, String.format("%s/tours/**", apiPrefix)).permitAll()
                             .requestMatchers(HttpMethod.DELETE, String.format("%s/tours/**", apiPrefix)).hasRole( RoleModel.ADMIN)
                             .requestMatchers(HttpMethod.GET, String.format("%s/tours/**", apiPrefix)).permitAll()
-                            .requestMatchers(HttpMethod.GET, String.format("%s/tours/images", apiPrefix)).permitAll()
+
+                            .requestMatchers(HttpMethod.POST, String.format("%s/users/details/**", apiPrefix)).hasAnyRole(RoleModel.USER, RoleModel.ADMIN)
+                            .requestMatchers(HttpMethod.PUT, String.format("%s/users/**", apiPrefix)).hasAnyRole(RoleModel.USER, RoleModel.ADMIN)
                             // Any other request must be authenticated
+                            .requestMatchers(HttpMethod.GET, String.format("%s/images/full/**", apiPrefix)).permitAll()
+                            .requestMatchers(HttpMethod.GET, String.format("%s/images/**", apiPrefix)).permitAll()
+                            .requestMatchers(HttpMethod.DELETE, String.format("%s/images/**", apiPrefix)).hasRole( RoleModel.ADMIN)
                             .anyRequest().authenticated();
+
+
                 })
                 .csrf(AbstractHttpConfigurer::disable);
         httpSecurity.cors(new Customizer<CorsConfigurer<HttpSecurity>>() {

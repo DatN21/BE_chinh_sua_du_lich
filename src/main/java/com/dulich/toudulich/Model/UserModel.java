@@ -34,13 +34,13 @@ public class UserModel implements UserDetails {
     @Column(name ="password", nullable = false, length = 255)
     private String passWord ;
 
-    @Column(name = "gender",nullable = false,length = 10)
+    @Column(name = "gender",length = 10)
     private String gender ;
 
-    @Column(name = "email",nullable = false,length = 255)
+    @Column(name = "email",length = 255)
     private String email ;
 
-    @Column(name = "address",nullable = false,length = 255)
+    @Column(name = "address",length = 255)
     private String address ;
 
     @ManyToOne
@@ -61,7 +61,7 @@ public class UserModel implements UserDetails {
 
     @Override
     public String getUsername() {
-        return getName();
+        return getPhone();
     }
 
     @Override

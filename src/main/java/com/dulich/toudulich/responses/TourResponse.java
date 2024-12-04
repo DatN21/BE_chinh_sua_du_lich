@@ -21,10 +21,10 @@ public class TourResponse {
     @JsonProperty("tour_name")
     String tourName;
 
-    int days;
+    String days;
 
     @JsonProperty("start_date")
-    Date startDate;
+    String startDate;
 
     String destination;
 

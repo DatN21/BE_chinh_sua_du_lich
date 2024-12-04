@@ -1,6 +1,7 @@
 package com.dulich.toudulich.Service;
 
 import com.dulich.toudulich.DTO.UserDTO;
+import com.dulich.toudulich.DTO.UserDTOUpdate;
 import com.dulich.toudulich.Model.RoleModel;
 import com.dulich.toudulich.Model.UserModel;
 import com.dulich.toudulich.Repositories.RoleRepository;
@@ -9,6 +10,7 @@ import com.dulich.toudulich.component.JwtTokenUtil;
 import com.dulich.toudulich.exceptions.DataNotFoundException;
 import com.dulich.toudulich.exceptions.InvalidParamException;
 import com.dulich.toudulich.exceptions.PermissionDenyException;
+import com.dulich.toudulich.responses.LoginResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -61,7 +63,7 @@ public class UserService implements iUserService {
     }
 
     @Override
-    public String login(String phone, String password) throws DataNotFoundException, InvalidParamException {
+    public LoginResponse login(String phone, String password) throws DataNotFoundException, InvalidParamException {
         Optional<UserModel> userOptional =  userRepository.findByPhone(phone);
         if(userOptional.isEmpty()){
             throw new DataNotFoundException("Invalid phone number / password!");
@@ -74,7 +76,42 @@ public class UserService implements iUserService {
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(phone,password,user.getAuthorities()) ;
         authenticationManager.authenticate( authenticationToken);
-        return jwtTokenUtil.generateToken(user);
+        return LoginResponse.builder()
+                .message("Login successful")
+                .token(jwtTokenUtil.generateToken(user))
+                .build();
+
+    }
+
+    @Override
+    public UserModel getUserDetailFromToken(String token) throws Exception {
+        if (jwtTokenUtil.isTokenExpired(token)){
+            throw new Exception("Token is expired") ;
+        }
+        String phone = jwtTokenUtil.extractPhone(token) ;
+        Optional<UserModel> userModel = userRepository.findByPhone(phone) ;
+
+        if (userModel.isPresent()){
+            return userModel.get() ;
+        }else {
+            throw new Exception("User not found") ;
+        }
+    }
+
+    @Override
+    public UserModel updateTour(int id, UserDTOUpdate userDTOUpdate) {
+        UserModel existingUser = getUserById(id);
+        existingUser.setPhone(userDTOUpdate.getPhone());
+        existingUser.setName(userDTOUpdate.getName());
+        existingUser.setEmail(userDTOUpdate.getEmail());
+        existingUser.setGender(userDTOUpdate.getGender());
+        userRepository.save(existingUser) ;
+        return existingUser;
+    }
+
+    @Override
+    public UserModel getUserById(int id) {
+        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User with id = " + id + " not found"));
     }
 
 }

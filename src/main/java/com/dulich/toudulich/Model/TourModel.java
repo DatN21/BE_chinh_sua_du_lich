@@ -25,10 +25,10 @@ public class TourModel {
     String tourName;
 
     @Column(name = "days", nullable = false)
-    int days;
+    String days;
 
     @Column(name = "start_date", nullable = false)
-    Date startDate;
+    String startDate;
 
     @Column(name = "destination", nullable = false, length = 255)
     String destination;

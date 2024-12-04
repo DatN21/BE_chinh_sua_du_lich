@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,10 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RestController
@@ -120,7 +118,7 @@ public class TourController {
         }
     }
 
-    @PostMapping(value = "uploads/{id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/uploads/{id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadImages(@PathVariable("id") int tourId,
                                           @ModelAttribute("files") List<MultipartFile> files) {
         try {
@@ -161,24 +159,6 @@ public class TourController {
 
 
 
-    @GetMapping("/images/{imageName}")
-    public ResponseEntity<?> viewImage(@PathVariable String imageName) {
-        try {
-            Path imagePath = Path.of("uploads").resolve(imageName);
-            UrlResource resource = new UrlResource(imagePath.toUri());
-
-            if (resource.exists()) {
-                return ResponseEntity.ok()
-                        .contentType(MediaType.IMAGE_JPEG)
-                        .body(resource);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (MalformedURLException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
 
     private String storeFile(MultipartFile file) throws IOException {
         if(!isImageFile(file) || file.getOriginalFilename() == null){
@@ -205,48 +185,41 @@ public class TourController {
         return contentType!= null && contentType.startsWith("image/");
     }
 
-    @PostMapping("generateFakeTours")
-    private ResponseEntity<String> generateFakeTours() {
-        Faker faker = new Faker();
-        for (int i = 0; i < 500000; i++) {
-            String tourName = faker.company().name(); // Sử dụng tên công ty để tạo tên tour
-            if (tourService.existByTourName(tourName)) { // Giả định bạn đã tạo phương thức existByName trong tourService
-                continue;
-            }
-
-            TourDTO tourDTO = TourDTO.builder()
-                    .tourName(tourName)
-                    .days(faker.number().numberBetween(1, 15)) // Số ngày tour từ 1 đến 15
-                    .startDate(faker.date().future(30, TimeUnit.DAYS)) // Ngày bắt đầu trong 30 ngày tới
-                    .destination(faker.address().city()) // Địa điểm là tên thành phố
-                    .tourType(faker.options().option("Adventure", "Cultural", "Relaxation", "Nature")) // Loại tour
-                    .departureLocation(faker.address().city()) // Địa điểm khởi hành
-                    .status("Available") // Tình trạng tour
-                    .price((float) faker.number().randomDouble(2, 10, 90000000)) // Giá từ 10 đến 90 triệu
-                    .build();
-
-            try {
-                tourService.createTour(tourDTO); // Giả định bạn đã tạo phương thức createTour trong tourService
-            } catch (Exception e) {
-                return ResponseEntity.badRequest().body(e.getMessage());
-            }
-        }
-        return ResponseEntity.ok("Generated fake tours successfully.");
-    }
+//    @PostMapping("generateFakeTours")
+//    private ResponseEntity<String> generateFakeTours() {
+//        Faker faker = new Faker();
+//        for (int i = 0; i < 500000; i++) {
+//            String tourName = faker.company().name(); // Sử dụng tên công ty để tạo tên tour
+//            if (tourService.existByTourName(tourName)) { // Giả định bạn đã tạo phương thức existByName trong tourService
+//                continue;
+//            }
+//
+//            TourDTO tourDTO = TourDTO.builder()
+//                    .tourName(tourName)
+//                    .days() // Số ngày tour từ 1 đến 15
+//                    .startDate(faker.date().future(30, TimeUnit.DAYS)) // Ngày bắt đầu trong 30 ngày tới
+//                    .destination(faker.address().city()) // Địa điểm là tên thành phố
+//                    .tourType(faker.options().option("Adventure", "Cultural", "Relaxation", "Nature")) // Loại tour
+//                    .departureLocation(faker.address().city()) // Địa điểm khởi hành
+//                    .status("Available") // Tình trạng tour
+//                    .price((float) faker.number().randomDouble(2, 10, 90000000)) // Giá từ 10 đến 90 triệu
+//                    .build();
+//
+//            try {
+//                tourService.createTour(tourDTO); // Giả định bạn đã tạo phương thức createTour trong tourService
+//            } catch (Exception e) {
+//                return ResponseEntity.badRequest().body(e.getMessage());
+//            }
+//        }
+//        return ResponseEntity.ok("Generated fake tours successfully.");
+//    }
 
     // Xử lý lấy tất cả ảnh, xoá 1 ảnh, xoá tất cả ảnh
-    @GetMapping("/{tourId}/images")
-    public ResponseEntity<List<TourImageDTO>> getTourImages(@PathVariable Integer tourId) {
-        List<TourImageDTO> images = tourService.getImagesByTourId(tourId);
-        return ResponseEntity.ok(images);
-    }
+
+
 
     // API: Xoá một ảnh
-    @DeleteMapping("/images/{imageId}")
-    public ResponseEntity<Void> deleteImage(@PathVariable Integer imageId) {
-        tourService.deleteImage(imageId);
-        return ResponseEntity.noContent().build();
-    }
+
 
     // API: Xoá tất cả ảnh theo tourId
     @DeleteMapping("/{tourId}/images")

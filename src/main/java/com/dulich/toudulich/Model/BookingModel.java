@@ -29,6 +29,14 @@ public class BookingModel {
     @JoinColumn(name = "user_id", nullable = false)
     UserModel userId;
 
+    @NotEmpty(message = "Full name can't be empty")
+    @Column(name = "full_name")
+    String fullName;
+
+    @NotEmpty(message = "Phone number can't be empty")
+    @Column(name = "phone_number")
+    String phoneNumber;
+
     @NotNull(message = "RoleId can't be empty")
     @ManyToOne
     @JoinColumn(name = "tour_id", nullable = false)
@@ -50,8 +58,6 @@ public class BookingModel {
     @Column(name = "status", length = 50)
     String status;
 
-    @Column(name = "payment_method", length = 50)
-    String paymentMethod;
 
     @Column(name = "notes")
     String notes;

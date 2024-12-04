@@ -35,13 +35,14 @@ public class BookingService implements iBookingService {
 
         BookingModel newBooking = BookingModel.builder()
                 .userId(existingUser)
+                .fullName(bookingDTO.getFullName())
+                .phoneNumber(bookingDTO.getPhoneNumber())
                 .tourId(existingTour)
                 .tourName(bookingDTO.getTourName())
                 .amount(bookingDTO.getAmount())
                 .startDate(bookingDTO.getStartDate())
                 .totalPrice(bookingDTO.getTotalPrice())
                 .status(bookingDTO.getStatus())
-                .paymentMethod(bookingDTO.getPaymentMethod())
                 .notes(bookingDTO.getNotes())
                 .build();
         return bookingRepository.save(newBooking);
@@ -79,7 +80,6 @@ public class BookingService implements iBookingService {
             existingBooking.setStartDate(booking.getStartDate());
             existingBooking.setTotalPrice(booking.getTotalPrice());
             existingBooking.setStatus(booking.getStatus());
-            existingBooking.setPaymentMethod(booking.getPaymentMethod());
             existingBooking.setNotes(booking.getNotes());
             return bookingRepository.save(existingBooking);
         }

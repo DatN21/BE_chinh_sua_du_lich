@@ -16,8 +16,16 @@ spring:
       ddl-auto: update  # Gi� tr? n�y c� th? l� none, validate, update, ho?c create-drop t�y thu?c v�o nhu c?u c?a b?n
 
     show-sql: true
+  web:
+    resources:
+      static-locations: file:///C:/Users/Dell/IdeaProjects/touDuLich/uploads/
 api:
   prefix: api/v1
+
+app:
+  upload-dir: C:/Users/Dell/IdeaProjects/touDuLich/uploads
+
+
 
 jwt:
   expiration: 2592000

@@ -11,4 +11,6 @@ public interface TourImageRepository extends JpaRepository<TourImageModel,Intege
     List<TourImageModel> findByTourModel(TourModel tourModel);
 
     List<TourImageModel> findByTourModel_Id(Integer tourId);
+
+    int countByTourModel_Id(int tourId);
 }

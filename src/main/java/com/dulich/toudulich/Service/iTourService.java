@@ -7,6 +7,7 @@ import com.dulich.toudulich.Model.TourModel;
 import com.dulich.toudulich.responses.TourResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public interface iTourService {
 
     boolean existByTourName(String name);
 
-    List<TourImageDTO> getImagesByTourId (Integer tourId) ;
+    Page<TourImageDTO> getImagesByTourId (Integer tourId, Pageable pageable) ;
 
     void deleteImage (Integer id) ;
     void deleteAllImagesByTourId(Integer tourId) ;

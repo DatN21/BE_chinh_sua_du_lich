@@ -1,0 +1,12 @@
+[33mbd9f3a6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/phanQuyen[m[33m, [m[1;31morigin/master[m[33m)[m HEAD@{0}: merge origin/phanQuyen: Fast-forward
+[33m3547b71[m HEAD@{1}: checkout: moving from phanQuyen to master
+[33m8a8d2bf[m[33m ([m[1;32mphanQuyen[m[33m)[m HEAD@{2}: commit: luu thay doi truoc khi chuyen nhanh
+[33mbd9f3a6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/phanQuyen[m[33m, [m[1;31morigin/master[m[33m)[m HEAD@{3}: commit: Phan quyen
+[33m3547b71[m HEAD@{4}: checkout: moving from master to phanQuyen
+[33m3547b71[m HEAD@{5}: commit (merge): Merge branch 'master' of https://github.com/DatN21/WebTourDuLich
+[33m4b2a231[m HEAD@{6}: commit: Commit changes in TourRepository and TourService
+[33m339aa54[m HEAD@{7}: commit: Cập nhật tạo dữ liệu giả cho tour
+[33m04fc56e[m HEAD@{8}: pull origin master: Fast-forward
+[33m0327098[m HEAD@{9}: reset: moving to HEAD
+[33m0327098[m HEAD@{10}: commit: them password trong userModel userDTO , viet chuc nang dang ky
+[33mbea6f6d[m HEAD@{11}: commit (initial): Gui code cho ae clone ve code

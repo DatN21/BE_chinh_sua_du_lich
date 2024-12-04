@@ -15,6 +15,13 @@ import java.util.Date;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BookingResponse{
+    int id ;
+
+    @JsonProperty("full_name")
+    String fullName;
+
+    @JsonProperty("phone_number")
+    String phoneNumber;
 
     @JsonProperty("tour_name")
     String tourName;
@@ -39,12 +46,14 @@ public class BookingResponse{
 
     public static BookingResponse fromBooking(BookingModel booking) {
         BookingResponse bookingResponse = BookingResponse.builder()
+                .id(booking.getId())
+                .fullName(booking.getFullName())
+                .phoneNumber(booking.getPhoneNumber())
                 .tourName(booking.getTourName())
                 .startDate(booking.getStartDate())
                 .amount(booking.getAmount())
                 .totalPrice(booking.getTotalPrice())
                 .status(booking.getStatus())
-                .paymentMethod(booking.getPaymentMethod())
                 .note(booking.getNotes())
                 .bookingTime(booking.getBookingTime())
                 .build();

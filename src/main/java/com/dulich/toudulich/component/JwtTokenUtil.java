@@ -32,7 +32,7 @@ public class JwtTokenUtil {
     public String generateToken(UserModel user) throws InvalidParamException {
         Map<String, Object> claims = new HashMap<>();
         claims.put("phone", user.getPhone());
-
+        claims.put("userId",user.getId()) ;
         try {
             String token = Jwts.builder()
                     .setClaims(claims)

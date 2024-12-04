@@ -61,17 +61,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
                 filterChain.doFilter(request, response);
             }catch (Exception e){
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                throw new RuntimeException(e.getMessage());
             }
     }
 
     private boolean isBypassToken(@Nonnull HttpServletRequest request){
         final List<Pair<String,String>> bypassTokens = Arrays.asList(
                 Pair.of(String.format("%s/tours", apiPrefix), "GET"),
-                Pair.of(String.format("%s/tours", apiPrefix), "POST"),
-                Pair.of(String.format("%s/tours", apiPrefix), "PUT"),
-                Pair.of(String.format("%s/bookings", apiPrefix), "GET"),
-                Pair.of(String.format("%s/bookings", apiPrefix), "POST"),
                 Pair.of(String.format("%s/users/register", apiPrefix), "POST"),
                 Pair.of(String.format("%s/users/login", apiPrefix), "POST")
         );

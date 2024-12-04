@@ -26,10 +26,10 @@ public class TourDTO {
     String tourName;
 
     @NotNull(message = "Tour days can't be empty")
-    int days;
+    String days;
 
     @NotNull(message = "StartDate can't be empty")
-    Date startDate;
+    String startDate;
 
     @NotEmpty(message = "Destination can't be empty")
     String destination;

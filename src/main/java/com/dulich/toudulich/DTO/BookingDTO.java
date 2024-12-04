@@ -19,6 +19,14 @@ public class    BookingDTO {
     @JsonProperty("user_id")
     int userId;
 
+    @NotEmpty(message = "Full name can't be empty")
+    @JsonProperty("full_name")
+    String fullName;
+
+    @NotEmpty(message = "Phone number can't be empty")
+    @JsonProperty("phone_number")
+    String phoneNumber;
+
     @NotNull(message = "TourId can't be empty")
     @JsonProperty("tour_id")
     int tourId;
@@ -39,9 +47,6 @@ public class    BookingDTO {
     float totalPrice;
 
     String status;
-
-    @JsonProperty("payment_method")
-    String paymentMethod;
 
     String notes;
 }
