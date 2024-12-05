@@ -6,6 +6,7 @@ import com.dulich.toudulich.Model.TourImageModel;
 import com.dulich.toudulich.Model.TourModel;
 import com.dulich.toudulich.Service.TourService;
 import com.dulich.toudulich.Service.iTourService;
+import com.dulich.toudulich.enums.Status;
 import com.dulich.toudulich.responses.ListTourResponse;
 import com.dulich.toudulich.responses.TourResponse;
 import com.github.javafaker.Faker;
@@ -70,6 +71,22 @@ public class TourController {
     }
 
     @GetMapping("")
+    public ResponseEntity<ListTourResponse> getAllTourByActive(
+            @RequestParam("page") int page,
+            @RequestParam("limit") int limit
+    ) {
+        PageRequest pageRequest = PageRequest.of(page, limit);
+        Page<TourResponse> tourResponses = tourService.getToursByStatus(Status.ACTIVE, pageRequest);
+        int totalPage = tourResponses.getTotalPages();
+        List<TourResponse> tours = tourResponses.getContent();
+
+        return ResponseEntity.ok(ListTourResponse.builder()
+                .tourResponses(tours)
+                .totalPages(totalPage)
+                .build());
+    }
+
+    @GetMapping("/full")
     public ResponseEntity<ListTourResponse> getAllTour(
             @RequestParam("page") int page,
             @RequestParam("limit") int limit
@@ -222,9 +239,5 @@ public class TourController {
 
 
     // API: Xoá tất cả ảnh theo tourId
-    @DeleteMapping("/{tourId}/images")
-    public ResponseEntity<Void> deleteAllImages(@PathVariable Integer tourId) {
-        tourService.deleteAllImagesByTourId(tourId);
-        return ResponseEntity.noContent().build();
-    }
+
 }

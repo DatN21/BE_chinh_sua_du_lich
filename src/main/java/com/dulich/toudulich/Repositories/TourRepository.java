@@ -1,6 +1,8 @@
 package com.dulich.toudulich.Repositories;
 
 import com.dulich.toudulich.Model.TourModel;
+import com.dulich.toudulich.enums.Status;
+import com.dulich.toudulich.responses.TourResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +18,5 @@ public interface TourRepository extends JpaRepository<TourModel, Integer> {
 
     boolean existsByTourName(String tourName);
 
+    Page<TourModel> findByStatus(Status status, Pageable pageable);
 }

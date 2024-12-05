@@ -4,6 +4,7 @@ import com.dulich.toudulich.DTO.TourDTO;
 import com.dulich.toudulich.DTO.TourImageDTO;
 import com.dulich.toudulich.Model.TourImageModel;
 import com.dulich.toudulich.Model.TourModel;
+import com.dulich.toudulich.enums.Status;
 import com.dulich.toudulich.responses.TourResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,5 +29,5 @@ public interface iTourService {
     void deleteAllImagesByTourId(Integer tourId) ;
 
 //    TourImageDTO mapToDTO(TourImageModel tourImageModel) ;
-
+Page<TourResponse> getToursByStatus(Status status, Pageable pageable);
 }

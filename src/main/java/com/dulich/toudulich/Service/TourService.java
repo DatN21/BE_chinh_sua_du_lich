@@ -194,6 +194,25 @@ public class TourService implements iTourService {
         dto.setTourId(image.getTourModel().getId());
         return dto;
     }
+    public Page<TourResponse> getToursByStatus(Status status, Pageable pageable) {
+        return tourRepository.findByStatus(status, pageable).map(tourModel -> {
+            return TourResponse.builder()
+                    .id(tourModel.getId())
+                    .tourName(tourModel.getTourName())
+                    .tourType(String.valueOf(tourModel.getTourType()))
+                    .days(tourModel.getDays())
+                    .departureLocation(tourModel.getDepartureLocation())
+                    .destination(tourModel.getDestination())
+                    .price(tourModel.getPrice())
+                    .startDate(tourModel.getStartDate())
+                    .status(String.valueOf(tourModel.getStatus()))
+                    .description(tourModel.getDescription())
+                    .content(tourModel.getContent())
+                    .imageHeader(tourModel.getImageHeader())
+                    .build();
+        });  // Tìm tour theo trạng thái và phân trang
+    }
+
 
 }
 

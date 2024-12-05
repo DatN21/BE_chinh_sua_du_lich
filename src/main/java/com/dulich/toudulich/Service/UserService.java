@@ -105,6 +105,7 @@ public class UserService implements iUserService {
         existingUser.setName(userDTOUpdate.getName());
         existingUser.setEmail(userDTOUpdate.getEmail());
         existingUser.setGender(userDTOUpdate.getGender());
+        existingUser.setAddress(userDTOUpdate.getAddress());
         userRepository.save(existingUser) ;
         return existingUser;
     }
