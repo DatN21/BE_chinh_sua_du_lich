@@ -29,5 +29,6 @@ public interface iTourService {
     void deleteAllImagesByTourId(Integer tourId) ;
 
 //    TourImageDTO mapToDTO(TourImageModel tourImageModel) ;
-Page<TourResponse> getToursByStatus(Status status, Pageable pageable);
+    Page<TourResponse> getToursByStatus(Status status, Pageable pageable);
+    List<TourImageDTO> getImagesByTourIdArray(Integer tourId) ;
 }

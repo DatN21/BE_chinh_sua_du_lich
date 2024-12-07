@@ -12,6 +12,6 @@ public interface iBookingService {
     BookingModel createBooking(BookingDTO booking) throws Exception;
     Page<BookingResponse> getAllBooking(PageRequest pageRequest);
     BookingModel getBookingById(int id) throws Exception;
-    BookingModel updateBooking(int bookingId,BookingDTO booking) throws Exception;
+    BookingModel updateBooking(int bookingId,String status) throws Exception;
     boolean deleteBooking(int bookingId);
 }

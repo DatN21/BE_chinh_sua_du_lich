@@ -2,7 +2,6 @@ package com.dulich.toudulich.Controller;
 
 import com.dulich.toudulich.DTO.BookingDTO;
 import com.dulich.toudulich.Model.BookingModel;
-import com.dulich.toudulich.Service.BookingService;
 import com.dulich.toudulich.Service.iBookingService;
 import com.dulich.toudulich.responses.BookingResponse;
 import com.dulich.toudulich.responses.ListBookingResponse;
@@ -16,7 +15,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -73,10 +74,10 @@ public class BookingController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateBooking(
             @PathVariable int id,
-            @RequestBody BookingDTO bookingDTO
+            @RequestBody String status
     ){
         try{
-            BookingModel updatedBooking = bookingService.updateBooking(id, bookingDTO);
+            BookingModel updatedBooking = bookingService.updateBooking(id, status);
             return ResponseEntity.ok(updatedBooking);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -84,22 +85,24 @@ public class BookingController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteBookingById(@PathVariable("id") int bookingId) {
+    public ResponseEntity<Object> deleteBookingById(@PathVariable("id") int bookingId) {
+        Map<String, Object> response = new HashMap<>();
         try {
             boolean isDeleted = bookingService.deleteBooking(bookingId);
             if (isDeleted) {
-                return ResponseEntity.ok(String.format("Booking with id = %d deleted successfully", bookingId));
+                response.put("status", "success");
+                response.put("message", String.format("Booking with id = %d deleted successfully", bookingId));
+                return ResponseEntity.ok(response);
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(String.format("Booking with id = %d not found", bookingId));
+                response.put("status", "error");
+                response.put("message", String.format("Booking with id = %d not found", bookingId));
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            response.put("status", "error");
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
     }
-
-
-
-
-
+    
 }

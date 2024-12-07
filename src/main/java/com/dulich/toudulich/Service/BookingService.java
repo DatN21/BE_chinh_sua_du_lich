@@ -60,31 +60,18 @@ public class BookingService implements iBookingService {
     }
 
     @Override
-    public BookingModel updateBooking(int bookingId, BookingDTO booking) throws Exception{
+    public BookingModel updateBooking(int bookingId, String status) throws Exception {
         BookingModel existingBooking = getBookingById(bookingId);
-        if(existingBooking != null) {
-            // copy các thuộc tính từ DTO -> BookingModel
-            // Có thể sử dụng ModelMapper
-            UserModel existingModel = userRepository
-                    .findById(booking.getUserId())
-                    .orElseThrow(
-                            () -> new DataNotFoundException("Can't find user with id: " + booking.getUserId()));
-
-            TourModel existingTour = tourRepository
-                    .findById(booking.getTourId())
-                    .orElseThrow(
-                            () -> new DataNotFoundException("Can't find tour with id: " + booking.getTourId()));
-
-            existingBooking.setTourName(booking.getTourName());
-            existingBooking.setAmount(booking.getAmount());
-            existingBooking.setStartDate(booking.getStartDate());
-            existingBooking.setTotalPrice(booking.getTotalPrice());
-            existingBooking.setStatus(booking.getStatus());
-            existingBooking.setNotes(booking.getNotes());
+        if (existingBooking != null) {
+            // Cập nhật chỉ trường status
+            if (status != null) {
+                existingBooking.setStatus(status);
+            }
             return bookingRepository.save(existingBooking);
         }
         return null;
     }
+
 
     @Override
     public boolean deleteBooking(int bookingId) {

@@ -1,9 +1,16 @@
 package com.dulich.toudulich.Controller;
 
+
 import com.dulich.toudulich.DTO.TourImageDTO;
+import com.dulich.toudulich.DTO.UserDTOUpdate;
+import com.dulich.toudulich.Model.UserModel;
 import com.dulich.toudulich.Service.iTourService;
+import com.dulich.toudulich.Service.iUserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,9 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import java.io.FileNotFoundException;
+
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,13 +28,13 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("${api.prefix}/images")
-public class ImageController {
+@RequestMapping("${api.prefix}/admin")
+public class AdminController {
     private final iTourService tourService;
-
+    private final iUserService userService ;
     @Value("${app.upload-dir}")
     private String uploadDir;
-    @GetMapping("/{tourId}")
+    @GetMapping("/images/{tourId}")
     public ResponseEntity<?> getImagesByTourId(
             @PathVariable Integer tourId,
             @RequestParam(defaultValue = "0") int page,
@@ -58,7 +63,7 @@ public class ImageController {
                     .body("Lỗi xảy ra: " + e.getMessage());
         }
     }
-    @GetMapping("/full/{filename}")
+    @GetMapping("/images/full/{filename}")
     public ResponseEntity<Resource> getImage(@PathVariable String filename) {
         try {
             // Xây dựng đường dẫn đầy đủ tới tệp
@@ -81,21 +86,9 @@ public class ImageController {
         }
     }
 
-    @DeleteMapping("/{imageId}")
+    @DeleteMapping("/images/{imageId}")
     public ResponseEntity<Void> deleteImage(@PathVariable Integer imageId) {
         tourService.deleteImage(imageId);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/user/{tourId}")
-    public ResponseEntity<?> getImagesByTourIdArray(
-            @PathVariable Integer tourId) {
-        try {
-            List<TourImageDTO> images = tourService.getImagesByTourIdArray(tourId);
-            return ResponseEntity.ok(images);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Lỗi xảy ra: " + e.getMessage());
-        }
     }
 }

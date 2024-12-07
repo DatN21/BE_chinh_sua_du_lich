@@ -115,6 +115,7 @@ public class TourService implements iTourService {
         existingTour.setPrice(tourDTO.getPrice());
         existingTour.setTourType(tourType);
 //        existingTour.setThubnail(tourDTO.getThumbnail());
+        existingTour.setImageHeader(tourDTO.getImageHeader());
         tourRepository.save(existingTour);
         return existingTour;
     }
@@ -211,6 +212,12 @@ public class TourService implements iTourService {
                     .imageHeader(tourModel.getImageHeader())
                     .build();
         });  // Tìm tour theo trạng thái và phân trang
+    }
+
+    @Override
+    public List<TourImageDTO> getImagesByTourIdArray(Integer tourId) {
+        return tourImageRepository.findByTourModel_Id(tourId).stream().map(image -> new TourImageDTO(image.getId(), image.getTourModel().getId(),image.getImageUrl()))
+                .collect(Collectors.toList());
     }
 
 

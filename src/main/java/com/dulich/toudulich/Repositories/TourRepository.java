@@ -19,4 +19,5 @@ public interface TourRepository extends JpaRepository<TourModel, Integer> {
     boolean existsByTourName(String tourName);
 
     Page<TourModel> findByStatus(Status status, Pageable pageable);
+
 }

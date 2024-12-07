@@ -61,7 +61,14 @@ public class WebConfig  {
                             // Any other request must be authenticated
                             .requestMatchers(HttpMethod.GET, String.format("%s/images/full/**", apiPrefix)).permitAll()
                             .requestMatchers(HttpMethod.GET, String.format("%s/images/**", apiPrefix)).permitAll()
+                            .requestMatchers(HttpMethod.GET, String.format("%s/images/user/**", apiPrefix)).permitAll()
                             .requestMatchers(HttpMethod.DELETE, String.format("%s/images/**", apiPrefix)).hasRole( RoleModel.ADMIN)
+
+                            .requestMatchers(HttpMethod.GET, String.format("%s/admin/**", apiPrefix)).hasRole( RoleModel.ADMIN)
+                            .requestMatchers(HttpMethod.DELETE, String.format("%s/admin/**", apiPrefix)).hasRole( RoleModel.ADMIN)
+
+                            .requestMatchers(HttpMethod.GET, String.format("%s/users/full/**", apiPrefix)).hasRole( RoleModel.ADMIN)
+                            .requestMatchers(HttpMethod.PUT, String.format("%s/users/admin/", apiPrefix)).hasAnyRole(RoleModel.USER, RoleModel.ADMIN)
                             .anyRequest().authenticated();
 
 

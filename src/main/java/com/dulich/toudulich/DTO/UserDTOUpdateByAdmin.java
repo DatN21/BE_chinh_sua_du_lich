@@ -1,7 +1,5 @@
 package com.dulich.toudulich.DTO;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.JoinColumn;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -10,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-public class UserDTOUpdate {
+public class UserDTOUpdateByAdmin {
     @NotBlank(message = "Họ và tên không được bỏ trống")
     private String name ;
 
@@ -27,4 +25,5 @@ public class UserDTOUpdate {
     @NotBlank(message = "Địa chỉ không được bỏ trống")
     private String address ;
 
+    private Long roleId ;
 }
