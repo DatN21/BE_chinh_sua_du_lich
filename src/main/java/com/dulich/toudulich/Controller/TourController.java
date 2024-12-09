@@ -239,5 +239,26 @@ public class TourController {
 
 
     // API: Xoá tất cả ảnh theo tourId
+    @GetMapping("/search")
+    public ResponseEntity<ListTourResponse> searchTours(
+            @RequestParam(value = "keyword", defaultValue = "") String keyword,
+            @RequestParam("page") int page,
+            @RequestParam("limit") int limit) {
+
+        // Tạo đối tượng Pageable cho phân trang
+        PageRequest pageRequest = PageRequest.of(page, limit);
+
+        // Tìm kiếm các tour có tên hoặc điểm đến chứa từ khóa
+        Page<TourResponse> tourResponses = tourService.searchToursByKeyword(keyword, pageRequest);
+        int totalPage = tourResponses.getTotalPages();
+        List<TourResponse> tours = tourResponses.getContent();
+
+        // Trả về kết quả
+        return ResponseEntity.ok(ListTourResponse.builder()
+                .tourResponses(tours)
+                .totalPages(totalPage)
+                .build());
+    }
+
 
 }

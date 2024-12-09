@@ -6,6 +6,8 @@ import com.dulich.toudulich.responses.TourResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,5 +21,10 @@ public interface TourRepository extends JpaRepository<TourModel, Integer> {
     boolean existsByTourName(String tourName);
 
     Page<TourModel> findByStatus(Status status, Pageable pageable);
+    @Query("SELECT t " +
+            "FROM TourModel t " +
+            "WHERE t.tourName LIKE %:keyword% OR t.destination LIKE %:keyword%")
+    Page<TourModel> findByTourNameContainingIgnoreCaseOrDestinationContainingIgnoreCase(
+            @Param("keyword") String keyword, Pageable pageable);
 
 }

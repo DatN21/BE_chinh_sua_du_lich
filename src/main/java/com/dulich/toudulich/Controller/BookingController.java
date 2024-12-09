@@ -104,5 +104,15 @@ public class BookingController {
             return ResponseEntity.badRequest().body(response);
         }
     }
-    
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<BookingResponse>> getBookingsByUserId(@PathVariable Integer userId) {
+        List<BookingResponse> bookings = bookingService.getBookingsByUserId(userId);
+        if (bookings.isEmpty()) {
+            return ResponseEntity.noContent().build(); // Trả về 204 nếu không có dữ liệu
+        }
+        return ResponseEntity.ok(bookings);
+    }
+
+
 }

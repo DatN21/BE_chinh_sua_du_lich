@@ -18,6 +18,7 @@ import java.util.Date;
 public class BookingResponse{
     int id ;
 
+    int userId ;
 
     @JsonProperty("full_name")
     String fullName;
@@ -49,6 +50,7 @@ public class BookingResponse{
     public static BookingResponse fromBooking(BookingModel booking) {
         BookingResponse bookingResponse = BookingResponse.builder()
                 .id(booking.getId())
+                .userId(booking.getUserModel().getId())
                 .fullName(booking.getFullName())
                 .phoneNumber(booking.getPhoneNumber())
                 .tourName(booking.getTourName())

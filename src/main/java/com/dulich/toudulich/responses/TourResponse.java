@@ -41,4 +41,5 @@ public class TourResponse {
     String description ;
     String content ;
     String imageHeader ;
+
 }

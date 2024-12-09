@@ -9,12 +9,15 @@ import com.dulich.toudulich.Repositories.TourRepository;
 import com.dulich.toudulich.Repositories.UserRepository;
 import com.dulich.toudulich.exceptions.DataNotFoundException;
 import com.dulich.toudulich.responses.BookingResponse;
+import com.dulich.toudulich.responses.ListBookingResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +37,7 @@ public class BookingService implements iBookingService {
                         new DataNotFoundException("Can't find tour with id: " + bookingDTO.getTourId()));
 
         BookingModel newBooking = BookingModel.builder()
-                .userId(existingUser)
+                .userModel(existingUser)
                 .fullName(bookingDTO.getFullName())
                 .phoneNumber(bookingDTO.getPhoneNumber())
                 .tourId(existingTour)
@@ -83,5 +86,14 @@ public class BookingService implements iBookingService {
             return false;
         }
     }
+
+    @Override
+    public List<BookingResponse> getBookingsByUserId(Integer userId) {
+        List<BookingModel> bookings = bookingRepository.findByUserModel_Id(userId);
+        return bookings.stream()
+                .map(BookingResponse::fromBooking)
+                .collect(Collectors.toList());
+    }
+
 
 }

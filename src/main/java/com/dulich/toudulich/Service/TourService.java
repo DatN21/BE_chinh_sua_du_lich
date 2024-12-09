@@ -220,6 +220,28 @@ public class TourService implements iTourService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public Page<TourResponse> searchToursByKeyword(String keyword, Pageable pageable) {
+        return tourRepository.findByTourNameContainingIgnoreCaseOrDestinationContainingIgnoreCase(keyword, pageable).map(tourModel -> {
+            return  TourResponse.builder()
+                    .id(tourModel.getId())
+                    .tourName(tourModel.getTourName())
+                    .tourType(String.valueOf(tourModel.getTourType()))
+                    .days(tourModel.getDays())
+                    .departureLocation(tourModel.getDepartureLocation())
+                    .destination(tourModel.getDestination())
+                    .price(tourModel.getPrice())
+                    .startDate(tourModel.getStartDate())
+                    .status(String.valueOf(tourModel.getStatus()))
+                    .description(tourModel.getDescription())
+                    .content(tourModel.getContent())
+                    .imageHeader(tourModel.getImageHeader())
+                    .build() ;
+        });
+    }
+
+
+
 
 }
 

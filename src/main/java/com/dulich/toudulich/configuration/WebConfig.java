@@ -48,27 +48,36 @@ public class WebConfig  {
                             .requestMatchers(HttpMethod.PUT, String.format("%s/bookings/**", apiPrefix)).permitAll()
                             .requestMatchers(HttpMethod.POST, String.format("%s/bookings/**", apiPrefix)).permitAll()
                             .requestMatchers(HttpMethod.DELETE, String.format("%s/bookings/**", apiPrefix)).permitAll()
-                            .requestMatchers(HttpMethod.GET, String.format("%s/bookings/**", apiPrefix)).permitAll()
+                            .requestMatchers(HttpMethod.GET, String.format("%s/bookings/user/**", apiPrefix))
+                            .hasAnyRole(RoleModel.USER, RoleModel.ADMIN)
+                            .requestMatchers(HttpMethod.GET, String.format("%s/bookings/**", apiPrefix))
+                            .hasRole(RoleModel.ADMIN)
+
 
                             // tours endpoints
                             .requestMatchers(HttpMethod.PUT, String.format("%s/tours/**", apiPrefix)).permitAll()
                             .requestMatchers(HttpMethod.POST, String.format("%s/tours/**", apiPrefix)).permitAll()
                             .requestMatchers(HttpMethod.DELETE, String.format("%s/tours/**", apiPrefix)).hasRole( RoleModel.ADMIN)
                             .requestMatchers(HttpMethod.GET, String.format("%s/tours/**", apiPrefix)).permitAll()
+                            .requestMatchers(HttpMethod.GET, String.format("%s/tours/search/**", apiPrefix)).permitAll()
 
+                            .requestMatchers(HttpMethod.GET, String.format("%s/users/full/**", apiPrefix)).hasRole( RoleModel.ADMIN)
+                            .requestMatchers(HttpMethod.PUT, String.format("%s/users/admin/", apiPrefix)).hasAnyRole(RoleModel.USER, RoleModel.ADMIN)
                             .requestMatchers(HttpMethod.POST, String.format("%s/users/details/**", apiPrefix)).hasAnyRole(RoleModel.USER, RoleModel.ADMIN)
                             .requestMatchers(HttpMethod.PUT, String.format("%s/users/**", apiPrefix)).hasAnyRole(RoleModel.USER, RoleModel.ADMIN)
                             // Any other request must be authenticated
-                            .requestMatchers(HttpMethod.GET, String.format("%s/images/full/**", apiPrefix)).permitAll()
-                            .requestMatchers(HttpMethod.GET, String.format("%s/images/**", apiPrefix)).permitAll()
+
                             .requestMatchers(HttpMethod.GET, String.format("%s/images/user/**", apiPrefix)).permitAll()
                             .requestMatchers(HttpMethod.DELETE, String.format("%s/images/**", apiPrefix)).hasRole( RoleModel.ADMIN)
+                            .requestMatchers(HttpMethod.GET, String.format("%s/images/full/**", apiPrefix)).permitAll()
+                            .requestMatchers(HttpMethod.GET, String.format("%s/images/**", apiPrefix)).permitAll()
+
 
                             .requestMatchers(HttpMethod.GET, String.format("%s/admin/**", apiPrefix)).hasRole( RoleModel.ADMIN)
                             .requestMatchers(HttpMethod.DELETE, String.format("%s/admin/**", apiPrefix)).hasRole( RoleModel.ADMIN)
 
-                            .requestMatchers(HttpMethod.GET, String.format("%s/users/full/**", apiPrefix)).hasRole( RoleModel.ADMIN)
-                            .requestMatchers(HttpMethod.PUT, String.format("%s/users/admin/", apiPrefix)).hasAnyRole(RoleModel.USER, RoleModel.ADMIN)
+
+
                             .anyRequest().authenticated();
 
 

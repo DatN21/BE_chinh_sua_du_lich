@@ -31,4 +31,6 @@ public interface iTourService {
 //    TourImageDTO mapToDTO(TourImageModel tourImageModel) ;
     Page<TourResponse> getToursByStatus(Status status, Pageable pageable);
     List<TourImageDTO> getImagesByTourIdArray(Integer tourId) ;
+
+    Page<TourResponse> searchToursByKeyword(String keyword, Pageable pageable) ;
 }

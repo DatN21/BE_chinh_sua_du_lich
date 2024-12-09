@@ -27,7 +27,7 @@ public class BookingModel {
     @NotNull(message = "UserId can't be empty")
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    UserModel userId;
+    UserModel userModel;
 
     @NotEmpty(message = "Full name can't be empty")
     @Column(name = "full_name")

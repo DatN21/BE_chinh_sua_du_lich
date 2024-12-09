@@ -98,4 +98,5 @@ public class ImageController {
                     .body("Lỗi xảy ra: " + e.getMessage());
         }
     }
+
 }
