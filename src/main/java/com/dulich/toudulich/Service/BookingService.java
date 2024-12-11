@@ -54,7 +54,6 @@ public class BookingService implements iBookingService {
                 .status(bookingDTO.getStatus())
                 .notes(bookingDTO.getNotes())
                 .build();
-
         // Lưu vào cơ sở dữ liệu
         return bookingRepository.save(newBooking);
     }

@@ -8,6 +8,7 @@ import com.dulich.toudulich.Repositories.TourImageRepository;
 import com.dulich.toudulich.Repositories.TourRepository;
 import com.dulich.toudulich.enums.Status;
 import com.dulich.toudulich.enums.TourType;
+import com.dulich.toudulich.exceptions.DataNotFoundException;
 import com.dulich.toudulich.responses.TourResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -240,7 +241,20 @@ public class TourService implements iTourService {
         });
     }
 
+    @Override
+    public TourModel updateStatus(int id, String status) throws DataNotFoundException {
+        TourModel tour = tourRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("Tour not found with ID: " + id));
 
+        // Chuyển đổi status từ chuỗi sang enum
+        Status newStatus = Status.fromString(status);
+
+        // Cập nhật trạng thái
+        tour.setStatus(newStatus);
+
+        // Lưu thay đổi vào cơ sở dữ liệu
+        return tourRepository.save(tour);
+    }
 
 
 }

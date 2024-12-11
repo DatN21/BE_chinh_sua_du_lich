@@ -55,7 +55,8 @@ public class WebConfig  {
 
 
                             // tours endpoints
-                            .requestMatchers(HttpMethod.PUT, String.format("%s/tours/**", apiPrefix)).permitAll()
+                            .requestMatchers(HttpMethod.PUT, String.format("%s/tours/status/**", apiPrefix)).hasRole( RoleModel.ADMIN)
+                            .requestMatchers(HttpMethod.PUT, String.format("%s/tours/**", apiPrefix)).hasRole( RoleModel.ADMIN)
                             .requestMatchers(HttpMethod.POST, String.format("%s/tours/**", apiPrefix)).permitAll()
                             .requestMatchers(HttpMethod.DELETE, String.format("%s/tours/**", apiPrefix)).hasRole( RoleModel.ADMIN)
                             .requestMatchers(HttpMethod.GET, String.format("%s/tours/**", apiPrefix)).permitAll()

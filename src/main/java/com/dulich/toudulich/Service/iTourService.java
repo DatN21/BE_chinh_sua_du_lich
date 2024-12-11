@@ -5,6 +5,7 @@ import com.dulich.toudulich.DTO.TourImageDTO;
 import com.dulich.toudulich.Model.TourImageModel;
 import com.dulich.toudulich.Model.TourModel;
 import com.dulich.toudulich.enums.Status;
+import com.dulich.toudulich.exceptions.DataNotFoundException;
 import com.dulich.toudulich.responses.TourResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,4 +34,6 @@ public interface iTourService {
     List<TourImageDTO> getImagesByTourIdArray(Integer tourId) ;
 
     Page<TourResponse> searchToursByKeyword(String keyword, Pageable pageable) ;
+
+    TourModel updateStatus(int id, String status) throws DataNotFoundException;
 }

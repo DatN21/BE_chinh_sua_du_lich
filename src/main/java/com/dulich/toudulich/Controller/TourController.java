@@ -7,6 +7,7 @@ import com.dulich.toudulich.Model.TourModel;
 import com.dulich.toudulich.Service.TourService;
 import com.dulich.toudulich.Service.iTourService;
 import com.dulich.toudulich.enums.Status;
+import com.dulich.toudulich.exceptions.DataNotFoundException;
 import com.dulich.toudulich.responses.ListTourResponse;
 import com.dulich.toudulich.responses.TourResponse;
 import com.github.javafaker.Faker;
@@ -259,6 +260,27 @@ public class TourController {
                 .totalPages(totalPage)
                 .build());
     }
+
+    @PutMapping("/status/{id}")
+    public ResponseEntity<?> updateTourStatus(
+            @PathVariable int id,
+            @RequestParam String status) {  // Sử dụng @RequestParam để nhận chuỗi status trực tiếp
+        try {
+            // Kiểm tra xem giá trị status có hợp lệ không
+
+            // Gọi service để cập nhật trạng thái
+            TourModel updatedTour = tourService.updateStatus(id, status);
+
+            return ResponseEntity.ok(updatedTour);
+        } catch (IllegalArgumentException e) {
+            // Nếu trạng thái không hợp lệ
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (DataNotFoundException e) {
+            // Nếu không tìm thấy tour
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
+    }
+
 
 
 }
