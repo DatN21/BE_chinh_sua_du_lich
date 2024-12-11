@@ -28,14 +28,20 @@ public class BookingService implements iBookingService {
 
     @Override
     public BookingModel createBooking(BookingDTO bookingDTO) throws DataNotFoundException {
+        // Lấy thông tin user từ userRepository
         UserModel existingUser = userRepository.findById(bookingDTO.getUserId())
                 .orElseThrow(() ->
                         new DataNotFoundException("Can't find user with id: " + bookingDTO.getUserId()));
 
+        // Lấy thông tin tour từ tourRepository
         TourModel existingTour = tourRepository.findById(bookingDTO.getTourId())
                 .orElseThrow(() ->
                         new DataNotFoundException("Can't find tour with id: " + bookingDTO.getTourId()));
 
+        // Tính toán lại totalPrice
+        float totalPrice = existingTour.getPrice() * bookingDTO.getAmount();
+
+        // Xây dựng đối tượng BookingModel
         BookingModel newBooking = BookingModel.builder()
                 .userModel(existingUser)
                 .fullName(bookingDTO.getFullName())
@@ -44,12 +50,15 @@ public class BookingService implements iBookingService {
                 .tourName(bookingDTO.getTourName())
                 .amount(bookingDTO.getAmount())
                 .startDate(bookingDTO.getStartDate())
-                .totalPrice(bookingDTO.getTotalPrice())
+                .totalPrice(totalPrice) // Sử dụng totalPrice đã tính toán
                 .status(bookingDTO.getStatus())
                 .notes(bookingDTO.getNotes())
                 .build();
+
+        // Lưu vào cơ sở dữ liệu
         return bookingRepository.save(newBooking);
     }
+
 
     @Override
     public Page<BookingResponse> getAllBooking(PageRequest pageRequest) {
