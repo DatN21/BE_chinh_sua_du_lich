@@ -1,8 +1,9 @@
 package com.dulich.toudulich.Controller;
 
 import com.dulich.toudulich.DTO.BookingDTO;
-import com.dulich.toudulich.Model.BookingModel;
-import com.dulich.toudulich.Service.iBookingService;
+import com.dulich.toudulich.Entity.Booking;
+import com.dulich.toudulich.Service.iBooking;
+import com.dulich.toudulich.responses.ApiResponse;
 import com.dulich.toudulich.responses.BookingResponse;
 import com.dulich.toudulich.responses.ListBookingResponse;
 import jakarta.validation.Valid;
@@ -23,23 +24,15 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("${api.prefix}/bookings")
 public class BookingController {
-    private final iBookingService bookingService;
+    private final iBooking bookingService;
 
     @PostMapping("")
-    public ResponseEntity<?> createBookings(
-            @Valid @RequestBody BookingDTO bookingDTO,
-            BindingResult result)
+    public ApiResponse<?> createBookings(
+            @Valid @RequestBody BookingDTO bookingDTO)
     {
         try {
-            if(result.hasErrors()){
-                List<String> errorMessages = result.getFieldErrors()
-                        .stream()
-                        .map(FieldError::getDefaultMessage)
-                        .toList();
-                return ResponseEntity.badRequest().body(errorMessages);
-            }
-            BookingModel bookingModel = bookingService.createBooking(bookingDTO) ;
-            return ResponseEntity.ok(bookingModel);
+            Booking booking = bookingService.createBooking(bookingDTO) ;
+            return ApiResponse.withData(BookingResponse.fromBooking(booking));
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -64,7 +57,7 @@ public class BookingController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getBookingById(@PathVariable("id") int bookingId){
         try {
-            BookingModel existingBooking = bookingService.getBookingById(bookingId);
+            Booking existingBooking = bookingService.getBookingById(bookingId);
             return ResponseEntity.ok(BookingResponse.fromBooking(existingBooking));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -77,7 +70,7 @@ public class BookingController {
             @RequestBody String status
     ){
         try{
-            BookingModel updatedBooking = bookingService.updateBooking(id, status);
+            Booking updatedBooking = bookingService.updateBooking(id, status);
             return ResponseEntity.ok(updatedBooking);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

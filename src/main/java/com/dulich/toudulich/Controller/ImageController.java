@@ -1,7 +1,9 @@
 package com.dulich.toudulich.Controller;
 
 import com.dulich.toudulich.DTO.TourImageDTO;
-import com.dulich.toudulich.Service.iTourService;
+import com.dulich.toudulich.Message.MessageConstants;
+import com.dulich.toudulich.Service.iTour;
+import com.dulich.toudulich.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -13,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import java.io.FileNotFoundException;
+
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,12 +27,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("${api.prefix}/images")
 public class ImageController {
-    private final iTourService tourService;
+    private final iTour tourService;
 
     @Value("${app.upload-dir}")
     private String uploadDir;
     @GetMapping("/{tourId}")
-    public ResponseEntity<?> getImagesByTourId(
+    public ApiResponse<?> getImagesByTourId(
             @PathVariable Integer tourId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -52,10 +54,9 @@ public class ImageController {
             response.put("numberOfElements", images.getNumberOfElements());
             response.put("empty", images.isEmpty());
 
-            return ResponseEntity.ok(response);
+            return ApiResponse.withData(response, MessageConstants.GET_IMAGE_SUCCESS);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Lỗi xảy ra: " + e.getMessage());
+            return ApiResponse.withError(e.getMessage());
         }
     }
     @GetMapping("/full/{filename}")

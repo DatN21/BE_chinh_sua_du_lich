@@ -1,6 +1,6 @@
 package com.dulich.toudulich.component;
 
-import com.dulich.toudulich.Model.UserModel;
+import com.dulich.toudulich.Entity.User;
 import com.dulich.toudulich.exceptions.InvalidParamException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidParameterException;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,7 +27,7 @@ public class JwtTokenUtil {
     @Value("${jwt.secretKey}")
     private String secretKey ;
 
-    public String generateToken(UserModel user) throws InvalidParamException {
+    public String generateToken(User user) throws InvalidParamException {
         Map<String, Object> claims = new HashMap<>();
         claims.put("phone", user.getPhone());
         claims.put("userId",user.getId()) ;

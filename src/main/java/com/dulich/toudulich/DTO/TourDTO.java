@@ -1,6 +1,7 @@
 package com.dulich.toudulich.DTO;
 
 
+import com.dulich.toudulich.enums.TourStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -22,34 +23,18 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TourDTO {
 
-    @NotBlank(message = "Tour name can't be empty")
     String tourName;
 
-    @NotNull(message = "Tour days can't be empty")
-    String days;
+    TourStatus status;
 
-    @NotNull(message = "StartDate can't be empty")
-    String startDate;
+    String duration;
 
-    @NotEmpty(message = "Destination can't be empty")
-    String destination;
+    Float price;
 
-    String tourType;
+    String description;
 
-    @NotEmpty(message = "Departure location can't be empty")
-    String departureLocation;
+    String departureLocation ;
 
-    String status;
-
-    @NotNull(message = "Price can't be empty")
-    float price;
-
-//    String thumbnail ;
-
-    String description ;
-
-    String content ;
-//    List<String> imageUrls;
-    String imageHeader ;
+    String imageHeader;
 }
 

@@ -1,4 +1,4 @@
-package com.dulich.toudulich.Model;
+package com.dulich.toudulich.Entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,17 +9,20 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "Roles")
+@Table(name = "roles")
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class RoleModel {
+public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @Column(name = "role_name",nullable = false)
-    String roleName;
+    @Column(name = "name",nullable = false)
+    String name;
+
+    @Column(name = "description",length = 255)
+    String description;
 
     public static String ADMIN = "ADMIN" ;
     public static String USER = "USER" ;

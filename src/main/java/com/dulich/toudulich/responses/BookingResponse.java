@@ -1,7 +1,6 @@
 package com.dulich.toudulich.responses;
 
-import com.dulich.toudulich.Model.BookingModel;
-import com.dulich.toudulich.Model.UserModel;
+import com.dulich.toudulich.Entity.Booking;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -47,10 +46,10 @@ public class BookingResponse{
     @JsonProperty("booking_time")
     LocalDateTime bookingTime;
 
-    public static BookingResponse fromBooking(BookingModel booking) {
+    public static BookingResponse fromBooking(Booking booking) {
         BookingResponse bookingResponse = BookingResponse.builder()
                 .id(booking.getId())
-                .userId(booking.getUserModel().getId())
+                .userId(booking.getCustomerId()))
                 .fullName(booking.getFullName())
                 .phoneNumber(booking.getPhoneNumber())
                 .tourName(booking.getTourName())

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -14,39 +15,31 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class    BookingDTO {
-    @NotNull(message = "UserId can't be empty")
-    @JsonProperty("user_id")
-    int userId;
+public class BookingDTO {
+    @NotNull
+    int id;
 
-    @NotEmpty(message = "Full name can't be empty")
-    @JsonProperty("full_name")
-    String fullName;
+    @NotNull
+    @JsonProperty("customer_id")
+    int customerId;
 
-    @NotEmpty(message = "Phone number can't be empty")
-    @JsonProperty("phone_number")
-    String phoneNumber;
+    @NotNull
+    @JsonProperty("tour_schedule_id")
+    int tourScheduleId;
 
-    @NotNull(message = "TourId can't be empty")
-    @JsonProperty("tour_id")
-    int tourId;
+    @NotNull
+    @JsonProperty("booked_slots")
+    int bookedSlots;
 
-    @NotEmpty(message = "Tour name can't be empty")
-    @JsonProperty("tour_name")
-    String tourName;
+    @JsonProperty("created_at")
+    LocalDateTime createdAt;
 
-    @NotNull(message = "Amount can't be empty")
-    float amount;
+    @JsonProperty("updated_at")
+    LocalDateTime updatedAt;
 
-    @NotNull(message = "Start date can't be empty")
-    @JsonProperty("start_date")
-    Date startDate;
-
-    @NotNull(message = "Total price can't be empty")
-    @JsonProperty("total_price")
-    float totalPrice;
-
+    @NotNull
+    @JsonProperty("status")
     String status;
 
-    String notes;
+
 }

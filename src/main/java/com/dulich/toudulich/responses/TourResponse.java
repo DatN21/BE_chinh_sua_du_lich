@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -18,20 +19,10 @@ import java.util.Date;
 public class TourResponse {
     int id ;
 
-    @JsonProperty("tour_name")
     String tourName;
 
-    String days;
+    String code;
 
-    @JsonProperty("start_date")
-    String startDate;
-
-    String destination;
-
-    @JsonProperty("tour_type")
-    String tourType;
-
-    @JsonProperty("departure_location")
     String departureLocation;
 
     String status;
@@ -39,7 +30,25 @@ public class TourResponse {
     float price;
 
     String description ;
-    String content ;
+
     String imageHeader ;
 
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
+    String duration;
+
+    public static TourResponse TourResponseMapper(com.dulich.toudulich.Entity.Tour tour) {
+        return TourResponse.builder()
+                .tourName(tour.getName())
+                .code(tour.getCode())
+                .departureLocation(tour.getDepatureLocation())
+                .status(String.valueOf(tour.getStatus()))
+                .price(tour.getPrice())
+                .description(tour.getDescription())
+                .imageHeader(tour.getImageHeader())
+                .createdAt(tour.getCreatedAt())
+                .updatedAt(tour.getUpdatedAt())
+                .duration(tour.getDuration())
+                .build();
+    }
 }
