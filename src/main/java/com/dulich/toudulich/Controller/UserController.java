@@ -1,22 +1,20 @@
 package com.dulich.toudulich.Controller;
 
 import com.dulich.toudulich.DTO.*;
-import com.dulich.toudulich.Model.TourModel;
-import com.dulich.toudulich.Model.UserModel;
-import com.dulich.toudulich.Service.iUserService;
+import com.dulich.toudulich.Entity.User;
+import com.dulich.toudulich.Message.MessageConstants;
+import com.dulich.toudulich.Service.iUser;
 import com.dulich.toudulich.exceptions.DataNotFoundException;
 import com.dulich.toudulich.exceptions.InvalidParamException;
 import com.dulich.toudulich.exceptions.UnauthorizedException;
 import com.dulich.toudulich.responses.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,54 +26,50 @@ import java.util.Map;
 @RestController
 @RequestMapping("${api.prefix}/users")
 public class UserController {
-    private final iUserService userService ;
+    private final iUser userService ;
     @GetMapping("")
     public ResponseEntity<?> getAll(){
         return ResponseEntity.ok("Ok");
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult){
+    public ApiResponse<UserDTO> register(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult){
         try {
             if (bindingResult.hasErrors()) {
                 List<String> errorMessages = bindingResult.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
-                return ResponseEntity.badRequest().body(errorMessages);
+                return ApiResponse.withError(errorMessages.toString());
             } else {
-                userService.createUser(userDTO);
-                return ResponseEntity.ok(userDTO);
+                return userService.createUser(userDTO);
             }
         } catch (Exception var4) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(var4.getMessage());
+            return ApiResponse.withError(MessageConstants.ERROR_OCCURRED);
         }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody UserLoginDTO userLoginDTO)
+    public ApiResponse<LoginResponse> login(@Valid @RequestBody UserLoginDTO userLoginDTO)
             throws DataNotFoundException, InvalidParamException {
-        LoginResponse loginResponse = userService.login(userLoginDTO.getPhone(), userLoginDTO.getPassword());
-        return ResponseEntity.ok(loginResponse); // Trả về LoginResponse
+            return userService.login(userLoginDTO.getPhone(), userLoginDTO.getPassword());
     }
 
     @PostMapping("/details")
-    public ResponseEntity<UserResponse> getUserDetail(@RequestHeader("Authorization") String token) {
+    public ApiResponse<User> getUserDetail(@RequestHeader("Authorization") String token) {
         try {
             String extracked = token.substring(7) ;
-            UserModel userModel = userService.getUserDetailFromToken(extracked) ;
-            return ResponseEntity.ok(UserResponse.fromUser(userModel)) ;
+            return userService.getUserDetailFromToken(extracked) ;
         }catch (Exception e)
         {
-            return ResponseEntity.badRequest().build() ;
+            return ApiResponse.withError(e.getMessage());
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser( @PathVariable int id,
+    public ApiResponse<?> updateUser( @PathVariable int id,
                                          @Valid @RequestBody UserDTOUpdate userDTOUpdate){
         try {
-            UserModel userModel = userService.updateUser(id,userDTOUpdate) ;
-            return ResponseEntity.ok(userModel) ;
+            return userService.updateUser(id,userDTOUpdate) ;
         }catch (Exception  e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ApiResponse.withError(e.getMessage());
         }
     }
 
@@ -109,13 +103,12 @@ public class UserController {
     }
 
     @PutMapping("/admin/{id}")
-    public ResponseEntity<?> updateUserByAdmin( @PathVariable int id,
+    public ApiResponse<?> updateUserByAdmin( @PathVariable int id,
                                          @Valid @RequestBody UserDTOUpdateByAdmin userDTOUpdate){
         try {
-            UserModel userModel = userService.updateUserByAdmin(id,userDTOUpdate) ;
-            return ResponseEntity.ok(userModel) ;
+            return userService.updateUserByAdmin(id,userDTOUpdate) ;
         }catch (Exception | UnauthorizedException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ApiResponse.withError(e.getMessage());
         }
     }
 }

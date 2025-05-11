@@ -1,6 +1,6 @@
 package com.dulich.toudulich.configuration;
 
-import com.dulich.toudulich.Model.RoleModel;
+import com.dulich.toudulich.Entity.Role;
 import com.dulich.toudulich.filter.JwtTokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,8 +16,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -49,33 +47,33 @@ public class WebConfig  {
                             .requestMatchers(HttpMethod.POST, String.format("%s/bookings/**", apiPrefix)).permitAll()
                             .requestMatchers(HttpMethod.DELETE, String.format("%s/bookings/**", apiPrefix)).permitAll()
                             .requestMatchers(HttpMethod.GET, String.format("%s/bookings/user/**", apiPrefix))
-                            .hasAnyRole(RoleModel.USER, RoleModel.ADMIN)
+                            .hasAnyRole(Role.USER, Role.ADMIN)
                             .requestMatchers(HttpMethod.GET, String.format("%s/bookings/**", apiPrefix))
-                            .hasRole(RoleModel.ADMIN)
+                            .hasRole(Role.ADMIN)
 
 
                             // tours endpoints
-                            .requestMatchers(HttpMethod.PUT, String.format("%s/tours/status/**", apiPrefix)).hasRole( RoleModel.ADMIN)
-                            .requestMatchers(HttpMethod.PUT, String.format("%s/tours/**", apiPrefix)).hasRole( RoleModel.ADMIN)
+                            .requestMatchers(HttpMethod.PUT, String.format("%s/tours/status/**", apiPrefix)).hasRole( Role.ADMIN)
+                            .requestMatchers(HttpMethod.PUT, String.format("%s/tours/**", apiPrefix)).hasRole( Role.ADMIN)
                             .requestMatchers(HttpMethod.POST, String.format("%s/tours/**", apiPrefix)).permitAll()
-                            .requestMatchers(HttpMethod.DELETE, String.format("%s/tours/**", apiPrefix)).hasRole( RoleModel.ADMIN)
+                            .requestMatchers(HttpMethod.DELETE, String.format("%s/tours/**", apiPrefix)).hasRole( Role.ADMIN)
                             .requestMatchers(HttpMethod.GET, String.format("%s/tours/**", apiPrefix)).permitAll()
                             .requestMatchers(HttpMethod.GET, String.format("%s/tours/search/**", apiPrefix)).permitAll()
 
-                            .requestMatchers(HttpMethod.GET, String.format("%s/users/full/**", apiPrefix)).hasRole( RoleModel.ADMIN)
-                            .requestMatchers(HttpMethod.PUT, String.format("%s/users/admin/", apiPrefix)).hasAnyRole(RoleModel.USER, RoleModel.ADMIN)
-                            .requestMatchers(HttpMethod.POST, String.format("%s/users/details/**", apiPrefix)).hasAnyRole(RoleModel.USER, RoleModel.ADMIN)
-                            .requestMatchers(HttpMethod.PUT, String.format("%s/users/**", apiPrefix)).hasAnyRole(RoleModel.USER, RoleModel.ADMIN)
+                            .requestMatchers(HttpMethod.GET, String.format("%s/users/full/**", apiPrefix)).hasRole( Role.ADMIN)
+                            .requestMatchers(HttpMethod.PUT, String.format("%s/users/admin/", apiPrefix)).hasAnyRole(Role.USER, Role.ADMIN)
+                            .requestMatchers(HttpMethod.POST, String.format("%s/users/details/**", apiPrefix)).hasAnyRole(Role.USER, Role.ADMIN)
+                            .requestMatchers(HttpMethod.PUT, String.format("%s/users/**", apiPrefix)).hasAnyRole(Role.USER, Role.ADMIN)
                             // Any other request must be authenticated
 
                             .requestMatchers(HttpMethod.GET, String.format("%s/images/user/**", apiPrefix)).permitAll()
-                            .requestMatchers(HttpMethod.DELETE, String.format("%s/images/**", apiPrefix)).hasRole( RoleModel.ADMIN)
+                            .requestMatchers(HttpMethod.DELETE, String.format("%s/images/**", apiPrefix)).hasRole( Role.ADMIN)
                             .requestMatchers(HttpMethod.GET, String.format("%s/images/full/**", apiPrefix)).permitAll()
                             .requestMatchers(HttpMethod.GET, String.format("%s/images/**", apiPrefix)).permitAll()
 
 
-                            .requestMatchers(HttpMethod.GET, String.format("%s/admin/**", apiPrefix)).hasRole( RoleModel.ADMIN)
-                            .requestMatchers(HttpMethod.DELETE, String.format("%s/admin/**", apiPrefix)).hasRole( RoleModel.ADMIN)
+                            .requestMatchers(HttpMethod.GET, String.format("%s/admin/**", apiPrefix)).hasRole( Role.ADMIN)
+                            .requestMatchers(HttpMethod.DELETE, String.format("%s/admin/**", apiPrefix)).hasRole( Role.ADMIN)
 
 
 

@@ -1,9 +1,7 @@
 package com.dulich.toudulich.responses;
-import com.dulich.toudulich.Model.UserModel;
+import com.dulich.toudulich.Entity.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-
-import java.util.Date;
 
 @Getter
 @Setter
@@ -30,15 +28,15 @@ public class UserResponse {
     private String gender;
 
     private String roleId ;
-    public static UserResponse fromUser(UserModel userModel) {
+    public static UserResponse fromUser(User user) {
         return UserResponse.builder()
-                .id(userModel.getId())
-                .name(userModel.getName())
-                .phone(userModel.getPhone())
-                .address(userModel.getAddress())
-                .email(userModel.getEmail())
-                .gender(userModel.getGender())
-                .roleId(userModel.getRoleId().getRoleName())
+                .id(user.getId())
+                .name(user.getName())
+                .phone(user.getPhone())
+                .address(user.getAddress())
+                .email(user.getEmail())
+                .gender(String.valueOf(user.getGender()))
+                .roleId(user.getRoleId())
                 .build();
     }
 }

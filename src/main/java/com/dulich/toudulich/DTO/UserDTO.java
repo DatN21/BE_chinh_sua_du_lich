@@ -10,6 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class UserDTO {
     @NotBlank(message = "Họ và tên không được bỏ trống")
     private String name ;
@@ -30,7 +31,5 @@ public class UserDTO {
 
     private String address ;
 
-    @JsonProperty("role_id")
-    private Long roleID ;
 
 }

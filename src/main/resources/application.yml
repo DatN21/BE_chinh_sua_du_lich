@@ -7,24 +7,23 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
   datasource:
-    url: jdbc:mysql://localhost:3306/tour?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/tour_update?useSSL=false&serverTimezone=UTC
     username: dat       # T�n ng??i d�ng MySQL
     password: 123456789       # M?t kh?u MySQL
     driver-class-name: com.mysql.cj.jdbc.Driver  # Driver JDBC cho MySQL
   jpa:
     hibernate:
-      ddl-auto: update  # Gi� tr? n�y c� th? l� none, validate, update, ho?c create-drop t�y thu?c v�o nhu c?u c?a b?n
+      ddl-auto: validate  # Gi� tr? n�y c� th? l� none, validate, update, ho?c create-drop t�y thu?c v�o nhu c?u c?a b?n
 
     show-sql: true
   web:
     resources:
-      static-locations: file:///C:/Users/Dell/IdeaProjects/touDuLich/uploads/
+      static-locations: file:///D:/a/uploads
 api:
   prefix: api/v1
 
 app:
-  upload-dir: C:/Users/Dell/IdeaProjects/touDuLich/uploads
-
+  upload-dir: D:/a/uploads
 
 
 jwt:

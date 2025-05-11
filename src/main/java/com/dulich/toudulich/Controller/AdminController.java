@@ -2,11 +2,8 @@ package com.dulich.toudulich.Controller;
 
 
 import com.dulich.toudulich.DTO.TourImageDTO;
-import com.dulich.toudulich.DTO.UserDTOUpdate;
-import com.dulich.toudulich.Model.UserModel;
-import com.dulich.toudulich.Service.iTourService;
-import com.dulich.toudulich.Service.iUserService;
-import jakarta.validation.Valid;
+import com.dulich.toudulich.Service.iTour;
+import com.dulich.toudulich.Service.iUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -23,15 +20,14 @@ import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${api.prefix}/admin")
 public class AdminController {
-    private final iTourService tourService;
-    private final iUserService userService ;
+    private final iTour tourService;
+    private final iUser userService ;
     @Value("${app.upload-dir}")
     private String uploadDir;
     @GetMapping("/images/{tourId}")

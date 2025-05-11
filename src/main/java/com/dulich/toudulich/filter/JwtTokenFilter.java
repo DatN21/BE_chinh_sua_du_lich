@@ -1,6 +1,7 @@
 package com.dulich.toudulich.filter;
 
-import com.dulich.toudulich.Model.UserModel;
+import com.dulich.toudulich.Entity.CustomUserDetails;
+import com.dulich.toudulich.Entity.User;
 import com.dulich.toudulich.component.JwtTokenUtil;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
@@ -47,7 +48,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 final String token = authHeader.substring(7) ;
                 final String phone =  jwtTokenUtil.extractPhone(token) ;
                 if(phone!=null && SecurityContextHolder.getContext().getAuthentication() == null){
-                    UserModel user = (UserModel) userDetailsService.loadUserByUsername(phone);
+                    CustomUserDetails user = (CustomUserDetails) userDetailsService.loadUserByUsername(phone);
                     if (jwtTokenUtil.validateToken(token, user)){
                         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                                 user,
