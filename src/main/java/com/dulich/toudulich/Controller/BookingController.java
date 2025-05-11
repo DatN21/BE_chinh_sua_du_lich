@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -31,20 +32,17 @@ public class BookingController {
             @Valid @RequestBody BookingDTO bookingDTO)
     {
         try {
-            Booking booking = bookingService.createBooking(bookingDTO) ;
-            return ApiResponse.withData(BookingResponse.fromBooking(booking));
+            return bookingService.createBooking(bookingDTO) ;
         }catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ApiResponse.withError(e.getMessage());
         }
     }
 
     @GetMapping("")
-    public ResponseEntity<ListBookingResponse> getAllBookings(
-            @RequestParam("page") int page,
-            @RequestParam("limit") int limit
+    public ApiResponse<Page<BookingResponse>> getAllBookings(
+            Pageable pageable
     ){
-        PageRequest pageRequest = PageRequest.of(page,limit);
-        Page<BookingResponse> bookingResponses = bookingService.getAllBooking(pageRequest);
+        Page<BookingResponse> bookingResponses = bookingService.getAllBooking(pageable);
         int totalPage = bookingResponses.getTotalPages() ;
         List<BookingResponse> bookings = bookingResponses.getContent();
         return ResponseEntity.ok(ListBookingResponse.builder()

@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
+
 @Entity
 @Data
 @Getter
@@ -23,7 +25,7 @@ public class BookingDetail {
     int bookingId;
 
     @Column(name = "price_per_person", nullable = false)
-    float tourScheduleId;
+    BigDecimal pricePerPerson;
 
     @Column(name = "full_name")
     String fullName;

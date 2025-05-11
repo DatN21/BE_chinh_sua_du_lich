@@ -6,8 +6,10 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Getter
@@ -41,5 +43,8 @@ public class BookingDTO {
     @JsonProperty("status")
     String status;
 
+    private List<BookingDetailDTO> details;
+
+    BigDecimal totalPrice;
 
 }

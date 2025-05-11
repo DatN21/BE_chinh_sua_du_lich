@@ -48,7 +48,6 @@ public class BookingResponse{
 
     public static BookingResponse fromBooking(Booking booking) {
         BookingResponse bookingResponse = BookingResponse.builder()
-                .id(booking.getId())
                 .userId(booking.getCustomerId()))
                 .fullName(booking.getFullName())
                 .phoneNumber(booking.getPhoneNumber())
