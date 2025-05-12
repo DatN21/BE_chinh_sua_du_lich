@@ -5,6 +5,7 @@ import com.dulich.toudulich.DTO.TourImageDTO;
 import com.dulich.toudulich.Entity.TourImage;
 import com.dulich.toudulich.Entity.Tour;
 import com.dulich.toudulich.enums.Status;
+import com.dulich.toudulich.enums.TourStatus;
 import com.dulich.toudulich.exceptions.DataNotFoundException;
 import com.dulich.toudulich.responses.ApiResponse;
 import com.dulich.toudulich.responses.TourResponse;
@@ -31,7 +32,7 @@ public interface iTour {
     void deleteAllImagesByTourId(Integer tourId) ;
 
 //    TourImageDTO mapToDTO(TourImageModel tourImageModel) ;
-    Page<TourResponse> getToursByStatus(Status status, Pageable pageable);
+    Page<TourResponse> getToursByStatus(TourStatus status, Pageable pageable);
     List<TourImageDTO> getImagesByTourIdArray(Integer tourId) ;
 
     Page<TourResponse> searchToursByKeyword(String keyword, Pageable pageable) ;

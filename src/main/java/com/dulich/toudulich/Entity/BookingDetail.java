@@ -6,6 +6,8 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Data
@@ -30,11 +32,12 @@ public class BookingDetail {
     @Column(name = "full_name")
     String fullName;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "gender")
     Gender gender;
 
     @Column(name = "birth_date", nullable = false)
-    String birthDate;
+    LocalDateTime birthDate;
 
     @Column(name = "age_group_id", nullable = false)
     int ageGroupId;

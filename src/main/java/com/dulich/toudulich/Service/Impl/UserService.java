@@ -4,6 +4,7 @@ import com.dulich.toudulich.DTO.UserDTO;
 import com.dulich.toudulich.DTO.UserDTOUpdate;
 import com.dulich.toudulich.DTO.UserDTOUpdateByAdmin;
 import com.dulich.toudulich.Entity.Role;
+import com.dulich.toudulich.Entity.User;
 import com.dulich.toudulich.Entity.UserRoles;
 import com.dulich.toudulich.Mapper.UserMapper;
 import com.dulich.toudulich.Message.MessageConstants;
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -64,14 +66,19 @@ public class UserService implements iUser {
 
         String passWord = userDTO.getPassword();
         String encodePassword = passwordEncoder.encode(passWord);
-
-        com.dulich.toudulich.Entity.User newUser = com.dulich.toudulich.Entity.User.builder()
+        Gender gender = userDTO.getGender() != null ? Gender.valueOf(userDTO.getGender()) : Gender.OTHER;
+        if (userDTO.getGender() == null) {
+            gender = Gender.OTHER; // Assign a default value or handle appropriately
+        }
+        User newUser = User.builder()
                 .email(userDTO.getEmail())
                 .phone(userDTO.getPhone())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .status(UserStatus.ACTIVE)
                 .password(encodePassword)
+                .gender(gender)
+                .name(userDTO.getName())
                 .build();
 
         userRepository.save(newUser);
@@ -79,19 +86,21 @@ public class UserService implements iUser {
                 .userId(newUser.getId())
                 .roleId(RoleType.USER.getId())
                 .build());
-        return ApiResponse.withData(userDTO, CREATED_SUCCESSFULLY);
+        userDTO.setPhone(newUser.getPhone());
+        userDTO.setPassword(newUser.getPassword());
+        return withData(userDTO, MessageConstants.USER_REGISTER_SUCCESS);
     }
 
     @Override
     public ApiResponse<LoginResponse> login(String phone, String password) throws DataNotFoundException, InvalidParamException {
         ApiResponse<LoginResponse> apiResponse = new ApiResponse<>();
-        Optional<com.dulich.toudulich.Entity.User> userOptional = userRepository.findByPhoneWithRoles(phone);
+        Optional<User> userOptional = userRepository.findByPhoneWithRoles(phone);
 
         if (userOptional.isEmpty()) {
             throw new DataNotFoundException("Invalid phone number / password!");
         }
 
-        com.dulich.toudulich.Entity.User user = userOptional.get();
+        User user = userOptional.get();
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new BadCredentialsException("Wrong phone number or password");
@@ -110,23 +119,23 @@ public class UserService implements iUser {
 
         authenticationManager.authenticate(authenticationToken);
 
-        return ApiResponse.withData(LoginResponse.builder()
+        return withData(LoginResponse.builder()
                 .message("Login successful")
                 .token(jwtTokenUtil.generateToken(user))
-                .build(), CREATED_SUCCESSFULLY);
+                .build(), MessageConstants.LOGIN_SUCCESS);
     }
 
 
     @Override
-    public ApiResponse<com.dulich.toudulich.Entity.User> getUserDetailFromToken(String token) throws Exception {
+    public ApiResponse<User> getUserDetailFromToken(String token) throws Exception {
         if (jwtTokenUtil.isTokenExpired(token)){
             throw new Exception("Token is expired") ;
         }
         String phone = jwtTokenUtil.extractPhone(token) ;
-        Optional<com.dulich.toudulich.Entity.User> userModel = userRepository.findByPhoneWithRoles(phone) ;
+        Optional<User> userModel = userRepository.findByPhoneWithRoles(phone) ;
 
         if (userModel.isPresent()){
-            return ApiResponse.withData(userModel.get(), MessageConstants.SUCCESS) ;
+            return withData(userModel.get(), MessageConstants.SUCCESS) ;
         }else {
             throw new Exception("User not found") ;
         }
@@ -136,11 +145,11 @@ public class UserService implements iUser {
     public ApiResponse<UserDTO> updateUserByAdmin(int id, UserDTOUpdateByAdmin userDTOUpdate) throws DataNotFoundException, UnauthorizedException {
         // Lấy số điện thoại người đang đăng nhập
         String currentPhone = SecurityContextHolder.getContext().getAuthentication().getName();
-        com.dulich.toudulich.Entity.User currentUser = userRepository.findByPhoneWithRoles(currentPhone)
+        User currentUser = userRepository.findByPhoneWithRoles(currentPhone)
                 .orElseThrow(() -> new RuntimeException("User not found with phone: " + currentPhone));
 
         // Lấy người dùng cần cập nhật
-        com.dulich.toudulich.Entity.User existingUser = getUserById(id);
+        User existingUser = getUserById(id);
 
         // Cập nhật thông tin cơ bản
         existingUser.setPhone(userDTOUpdate.getPhone());
@@ -173,7 +182,7 @@ public class UserService implements iUser {
         userRepository.save(existingUser);
 
         // Trả về DTO
-        return ApiResponse.withData(UserMapper.toDTO(existingUser), MessageConstants.UPDATED_SUCCESSFULLY);
+        return withData(UserMapper.toDTO(existingUser), MessageConstants.UPDATED_SUCCESSFULLY);
     }
 
 
@@ -182,31 +191,31 @@ public class UserService implements iUser {
 
 
     @Override
-    public com.dulich.toudulich.Entity.User getUserById(int id) {
+    public User getUserById(int id) {
         return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User with id = " + id + " not found"));
     }
 
     @Override
-    public Page<UserResponse> getUserResponse(PageRequest pageRequest) {
-        return userRepository.findAll(pageRequest).map(UserResponse::fromUser);
+    public ApiResponse<Page<UserResponse>> getUserResponse(Pageable pageable) {
+        return withData(userRepository.findAll(pageable).map(UserResponse::fromUser), MessageConstants.SUCCESS);
     }
 
     @Override
     public void  deleteUser(int id) {
-        com.dulich.toudulich.Entity.User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
         userRepository.delete(user);
     }
 
     @Override
     public ApiResponse<UserDTO> updateUser(int id, UserDTOUpdate userDTOUpdate) {
-        com.dulich.toudulich.Entity.User existingUser = getUserById(id);
+        User existingUser = getUserById(id);
         existingUser.setPhone(userDTOUpdate.getPhone());
         existingUser.setName(userDTOUpdate.getName());
         existingUser.setEmail(userDTOUpdate.getEmail());
         existingUser.setGender(Gender.valueOf(userDTOUpdate.getGender()));
         existingUser.setAddress(userDTOUpdate.getAddress());
         userRepository.save(existingUser) ;
-        return ApiResponse.withData(UserMapper.toDTO(existingUser), MessageConstants.UPDATED_SUCCESSFULLY);
+        return withData(UserMapper.toDTO(existingUser), MessageConstants.UPDATED_SUCCESSFULLY);
     }
 
 

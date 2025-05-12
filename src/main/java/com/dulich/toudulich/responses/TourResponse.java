@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -27,7 +28,7 @@ public class TourResponse {
 
     String status;
 
-    float price;
+    BigDecimal price;
 
     String description ;
 
@@ -35,7 +36,7 @@ public class TourResponse {
 
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
-    String duration;
+    int duration;
 
     public static TourResponse TourResponseMapper(com.dulich.toudulich.Entity.Tour tour) {
         return TourResponse.builder()

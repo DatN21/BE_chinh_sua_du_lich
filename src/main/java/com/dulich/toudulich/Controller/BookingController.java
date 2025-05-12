@@ -2,8 +2,10 @@ package com.dulich.toudulich.Controller;
 
 import com.dulich.toudulich.DTO.BookingDTO;
 import com.dulich.toudulich.Entity.Booking;
+import com.dulich.toudulich.Message.MessageConstants;
 import com.dulich.toudulich.Service.iBooking;
 import com.dulich.toudulich.responses.ApiResponse;
+import com.dulich.toudulich.responses.BookingInfoResponse;
 import com.dulich.toudulich.responses.BookingResponse;
 import com.dulich.toudulich.responses.ListBookingResponse;
 import jakarta.validation.Valid;
@@ -29,7 +31,7 @@ public class BookingController {
 
     @PostMapping("")
     public ApiResponse<?> createBookings(
-            @Valid @RequestBody BookingDTO bookingDTO)
+             @RequestBody BookingDTO bookingDTO)
     {
         try {
             return bookingService.createBooking(bookingDTO) ;
@@ -39,26 +41,20 @@ public class BookingController {
     }
 
     @GetMapping("")
-    public ApiResponse<Page<BookingResponse>> getAllBookings(
+    public ApiResponse<Page<BookingInfoResponse>> getAllBookings(
             Pageable pageable
     ){
-        Page<BookingResponse> bookingResponses = bookingService.getAllBooking(pageable);
-        int totalPage = bookingResponses.getTotalPages() ;
-        List<BookingResponse> bookings = bookingResponses.getContent();
-        return ResponseEntity.ok(ListBookingResponse.builder()
-                .bookingResponses(bookings)
-                .totalPages(totalPage)
-                .build());
+        return bookingService.getAllBooking(pageable);
     }
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getBookingById(@PathVariable("id") int bookingId){
+    public ApiResponse<?> getBookingById(@PathVariable("id") int bookingId){
         try {
             Booking existingBooking = bookingService.getBookingById(bookingId);
-            return ResponseEntity.ok(BookingResponse.fromBooking(existingBooking));
+            return ApiResponse.withData(existingBooking, MessageConstants.SUCCESS);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ApiResponse.withError(e.getMessage());
         }
     }
 

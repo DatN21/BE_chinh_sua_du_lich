@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,7 +29,7 @@ public class TourDiscount {
     String discountType;
 
     @Column(name = "discount_value", nullable = false)
-    float discountValue;
+    BigDecimal discountValue;
 
     @Column(name = "min_guests")
     int minGuests;
@@ -36,6 +37,7 @@ public class TourDiscount {
     @Column(name = "description")
     String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     TourDiscountStatus status;
 

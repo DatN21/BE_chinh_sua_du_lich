@@ -3,6 +3,7 @@ package com.dulich.toudulich.Service;
 import com.dulich.toudulich.DTO.BookingDTO;
 import com.dulich.toudulich.Entity.Booking;
 import com.dulich.toudulich.responses.ApiResponse;
+import com.dulich.toudulich.responses.BookingInfoResponse;
 import com.dulich.toudulich.responses.BookingResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,7 +16,8 @@ import java.util.List;
 public interface iBooking {
     ApiResponse<BookingDTO> createBooking(BookingDTO booking) throws Exception;
 
-    Page<BookingResponse> getAllBooking(Pageable pageable);
+    ApiResponse<Page<BookingInfoResponse>> getAllBooking(Pageable pageable);
+
     Booking getBookingById(int id) throws Exception;
     Booking updateBooking(int bookingId, String status) throws Exception;
     boolean deleteBooking(int bookingId);

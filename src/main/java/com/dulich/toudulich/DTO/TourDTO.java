@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -27,9 +28,9 @@ public class TourDTO {
 
     TourStatus status;
 
-    String duration;
+    int duration;
 
-    Float price;
+    BigDecimal price;
 
     String description;
 

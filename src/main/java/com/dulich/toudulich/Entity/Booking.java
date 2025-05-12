@@ -37,6 +37,7 @@ public class Booking {
     @Column(name = "updated_at")
     LocalDateTime updatedAt;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     BookingStatus status;
 }

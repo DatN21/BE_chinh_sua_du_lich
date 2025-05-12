@@ -7,7 +7,4 @@ import org.springframework.stereotype.Repository;
 import java.beans.JavaBean;
 @Repository
 public interface TourPriceByAgeRepository extends JpaRepository<TourPriceByAge, Integer> {
-    boolean existsByAgeGroupIdAndTourScheduleId(int ageGroupId, int tourScheduleId);
-    boolean existsByTourScheduleId(int tourScheduleId);
-    boolean existsByTourScheduleIdAndAgeGroupId(int tourScheduleId, int ageGroupId);
 }

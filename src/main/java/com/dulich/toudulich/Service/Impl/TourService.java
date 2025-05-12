@@ -41,7 +41,7 @@ public class TourService implements iTour {
     @Override
     public ApiResponse<TourResponse> createTour(TourDTO tourDTO) throws Exception {
         // Kiểm tra và chuyển đổi enum TourType và Status
-        Status status = Status.fromString(String.valueOf(tourDTO.getStatus()).toUpperCase());
+        TourStatus status = TourStatus.fromString(String.valueOf(tourDTO.getStatus()).toUpperCase());
 //        try {
 //            tourType = TourType.valueOf(tourDTO.getTourType());
 //        } catch (IllegalArgumentException e) {
@@ -65,7 +65,7 @@ public class TourService implements iTour {
                 .imageHeader(tourDTO.getImageHeader())
                 .code(generateNonDuplicateTourCode()) // Tạo mã tour duy nhất
                 .build();
-
+        tourRepository.save(newTour);
         //
 //        // Xử lý ảnh nếu có
 //        if (tourDTO.getImageUrls() != null && !tourDTO.getImageUrls().isEmpty()) {
@@ -136,7 +136,7 @@ public class TourService implements iTour {
                 .orElseThrow(() -> new EntityNotFoundException("Cannot find tour with id: " + tourId));
 
         // Kiểm tra số lượng ảnh
-        int size = tourImageRepository.countByTourModel_Id(tourId);
+        int size = tourImageRepository.countByTourId(tourId);
         if (size >= TourImage.MAXIMUM_IMAGE_P_PRODUCT) {
             throw new IllegalArgumentException("Maximum number of images per tour is " + TourImage.MAXIMUM_IMAGE_P_PRODUCT);
         }
@@ -156,13 +156,13 @@ public class TourService implements iTour {
 
     @Override
     public boolean existByTourName(String tourName) {
-        return tourRepository.existsByTourName(tourName);
+        return tourRepository.existsByName(tourName);
     }
 
     @Override
     public Page<TourImageDTO> getImagesByTourId(Integer tourId, Pageable pageable) {
         // Lấy danh sách các TourImageModel từ cơ sở dữ liệu
-        List<TourImage> images = tourImageRepository.findByTourModel_Id(tourId);
+        List<TourImage> images = tourImageRepository.findByTourId(tourId);
 
         // Chuyển đổi danh sách TourImageModel sang TourImageDTO
         List<TourImageDTO> imageDTOs = images.stream()
@@ -186,18 +186,18 @@ public class TourService implements iTour {
 
     // Xoá tất cả ảnh theo tourId
     public void deleteAllImagesByTourId(Integer tourId) {
-        List<TourImage> images = tourImageRepository.findByTourModel_Id(tourId);
+        List<TourImage> images = tourImageRepository.findByTourId(tourId);
         tourImageRepository.deleteAll(images);
     }
 
-    public Page<TourResponse> getToursByStatus(Status status, Pageable pageable) {
+    public Page<TourResponse> getToursByStatus(TourStatus status, Pageable pageable) {
         Page<Tour> tours = tourRepository.findByStatus(status, pageable);
         return tours.map(TourResponse::TourResponseMapper);
     }
 
     @Override
     public List<TourImageDTO> getImagesByTourIdArray(Integer tourId) {
-        return tourImageRepository.findByTourModel_Id(tourId).stream().map(image -> new TourImageDTO(image.getId(), image.getTourId(),image.getImageUrl()))
+        return tourImageRepository.findByTourId(tourId).stream().map(image -> new TourImageDTO(image.getId(), image.getTourId(),image.getImageUrl()))
                 .collect(Collectors.toList());
     }
 

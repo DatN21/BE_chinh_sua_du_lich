@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -24,10 +25,10 @@ public class TourSchedule {
     int tourId;
 
     @Column(name = "start_date", nullable = false)
-    String startDate;
+    LocalDateTime startDate;
 
     @Column(name = "end_date", nullable = false)
-    String endDate;
+    LocalDateTime endDate;
 
     @Column(name = "total_slots", nullable = false)
     int totalSlots;
@@ -44,6 +45,7 @@ public class TourSchedule {
     @Column(name = "updated_at")
     LocalDateTime updatedAt;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     TourScheduleStatus status;
 }

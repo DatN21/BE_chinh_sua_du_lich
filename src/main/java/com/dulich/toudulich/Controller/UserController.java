@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -33,16 +34,11 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ApiResponse<UserDTO> register(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult){
+    public ApiResponse<UserDTO> register( @RequestBody UserDTO userDTO){
         try {
-            if (bindingResult.hasErrors()) {
-                List<String> errorMessages = bindingResult.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
-                return ApiResponse.withError(errorMessages.toString());
-            } else {
                 return userService.createUser(userDTO);
-            }
         } catch (Exception var4) {
-            return ApiResponse.withError(MessageConstants.ERROR_OCCURRED);
+            return ApiResponse.withError(var4.getMessage());
         }
     }
 
@@ -74,31 +70,23 @@ public class UserController {
     }
 
     @GetMapping("/full")
-    public ResponseEntity<ListUserResponse> getAllUser(
-            @RequestParam("page") int page,
-            @RequestParam("limit") int limit
+    public ApiResponse<Page<UserResponse>> getAllUser(
+            Pageable pageable
     ){
-        PageRequest pageRequest = PageRequest.of(page,limit);
-        Page<UserResponse> userResponse = userService.getUserResponse(pageRequest);
-        int totalPage = userResponse.getTotalPages() ;
-        List<UserResponse> userResponses = userResponse.getContent();
-        return ResponseEntity.ok(ListUserResponse.builder()
-                .userResponses(userResponses)
-                .totalPages(totalPage)
-                .build());
+        return userService.getUserResponse(pageable) ;
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, String>> deleteUser(@PathVariable int id) {
+    public ApiResponse<Map<String, String>> deleteUser(@PathVariable int id) {
         Map<String, String> response = new HashMap<>();
         try {
             // Gọi service để xoá người dùng
             userService.deleteUser(id);
             response.put("message", "Người dùng đã được xóa thành công!");
-            return ResponseEntity.ok(response);
+            return ApiResponse.withData(response, "Người dùng đã được xóa thành công!");
         } catch (Exception e) {
             response.put("message", "Không thể xóa người dùng. Vui lòng thử lại!");
-            return ResponseEntity.status(500).body(response);
+            return ApiResponse.withError(response.get("message"));
         }
     }
 

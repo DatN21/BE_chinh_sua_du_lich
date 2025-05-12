@@ -8,6 +8,7 @@ import com.dulich.toudulich.Message.MessageConstants;
 import com.dulich.toudulich.Service.iTour;
 import com.dulich.toudulich.enums.Status;
 import com.dulich.toudulich.enums.TourDiscountStatus;
+import com.dulich.toudulich.enums.TourStatus;
 import com.dulich.toudulich.exceptions.DataNotFoundException;
 import com.dulich.toudulich.responses.ApiResponse;
 import com.dulich.toudulich.responses.ListTourResponse;
@@ -54,7 +55,7 @@ public class TourController {
     @GetMapping("")
     public ApiResponse<Page<TourResponse>>getAllTourByActive(Pageable pageable
                                                              ) {
-        Page<TourResponse> tourResponses = tourService.getToursByStatus(Status.ACTIVE, pageable);
+        Page<TourResponse> tourResponses = tourService.getToursByStatus(TourStatus.ACTIVE, pageable);
         return ApiResponse.withData(tourResponses, MessageConstants.SUCCESS);
     }
 
