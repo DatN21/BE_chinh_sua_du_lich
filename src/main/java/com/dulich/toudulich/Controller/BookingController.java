@@ -2,14 +2,17 @@ package com.dulich.toudulich.Controller;
 
 import com.dulich.toudulich.DTO.BookingDTO;
 import com.dulich.toudulich.Entity.Booking;
+import com.dulich.toudulich.Message.MessageConstants;
 import com.dulich.toudulich.Service.iBooking;
 import com.dulich.toudulich.responses.ApiResponse;
+import com.dulich.toudulich.responses.BookingInfoResponse;
 import com.dulich.toudulich.responses.BookingResponse;
 import com.dulich.toudulich.responses.ListBookingResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -28,39 +31,30 @@ public class BookingController {
 
     @PostMapping("")
     public ApiResponse<?> createBookings(
-            @Valid @RequestBody BookingDTO bookingDTO)
+             @RequestBody BookingDTO bookingDTO)
     {
         try {
-            Booking booking = bookingService.createBooking(bookingDTO) ;
-            return ApiResponse.withData(BookingResponse.fromBooking(booking));
+            return bookingService.createBooking(bookingDTO) ;
         }catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ApiResponse.withError(e.getMessage());
         }
     }
 
     @GetMapping("")
-    public ResponseEntity<ListBookingResponse> getAllBookings(
-            @RequestParam("page") int page,
-            @RequestParam("limit") int limit
+    public ApiResponse<Page<BookingInfoResponse>> getAllBookings(
+            Pageable pageable
     ){
-        PageRequest pageRequest = PageRequest.of(page,limit);
-        Page<BookingResponse> bookingResponses = bookingService.getAllBooking(pageRequest);
-        int totalPage = bookingResponses.getTotalPages() ;
-        List<BookingResponse> bookings = bookingResponses.getContent();
-        return ResponseEntity.ok(ListBookingResponse.builder()
-                .bookingResponses(bookings)
-                .totalPages(totalPage)
-                .build());
+        return bookingService.getAllBooking(pageable);
     }
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getBookingById(@PathVariable("id") int bookingId){
+    public ApiResponse<?> getBookingById(@PathVariable("id") int bookingId){
         try {
             Booking existingBooking = bookingService.getBookingById(bookingId);
-            return ResponseEntity.ok(BookingResponse.fromBooking(existingBooking));
+            return ApiResponse.withData(existingBooking, MessageConstants.SUCCESS);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ApiResponse.withError(e.getMessage());
         }
     }
 

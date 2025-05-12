@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
     Page<Booking> findAll (Pageable pePageable);// Phân trang
-    List<Booking> findByUserModel_Id(Integer userId);
+    List<Booking> findByCustomerId(Integer userId);
 
 }

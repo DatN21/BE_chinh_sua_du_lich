@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -31,10 +32,10 @@ public class BookingResponse{
     float amount;
 
     @JsonProperty("start_date")
-    Date startDate;
+    LocalDateTime startDate;
 
     @JsonProperty("total_price")
-    float totalPrice;
+    BigDecimal totalPrice;
 
     String status;
 
@@ -46,20 +47,27 @@ public class BookingResponse{
     @JsonProperty("booking_time")
     LocalDateTime bookingTime;
 
-    public static BookingResponse fromBooking(Booking booking) {
-        BookingResponse bookingResponse = BookingResponse.builder()
+    public static BookingResponse fromBooking(Booking booking,
+                                              String fullName,
+                                              String phoneNumber,
+                                              String tourName,
+                                              LocalDateTime startDate,
+                                              BigDecimal totalPrice,
+                                              String paymentMethod) {
+        return BookingResponse.builder()
                 .id(booking.getId())
-                .userId(booking.getCustomerId()))
-                .fullName(booking.getFullName())
-                .phoneNumber(booking.getPhoneNumber())
-                .tourName(booking.getTourName())
-                .startDate(booking.getStartDate())
-                .amount(booking.getAmount())
-                .totalPrice(booking.getTotalPrice())
-                .status(booking.getStatus())
-                .notes(booking.getNotes())
-                .bookingTime(booking.getBookingTime())
+                .userId(booking.getCustomerId())
+                .fullName(fullName)
+                .phoneNumber(phoneNumber)
+                .tourName(tourName)
+                .amount(booking.getBookedSlots())
+                .startDate(startDate)
+                .totalPrice(totalPrice)
+                .status(booking.getStatus().name())
+                .paymentMethod(paymentMethod)
+                .notes("") // nếu có ghi chú thì thêm
+                .bookingTime(booking.getCreatedAt())
                 .build();
-        return bookingResponse;
     }
+
 }

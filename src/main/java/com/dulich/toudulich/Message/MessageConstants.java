@@ -6,6 +6,7 @@ public class MessageConstants {
     public static final String CREATED_SUCCESSFULLY = "Tạo mới thành công";
     public static final String UPDATED_SUCCESSFULLY = "Cập nhật thành công";
     public static final String DELETED_SUCCESSFULLY = "Xóa thành công";
+    public static final String LOGIN_SUCCESS = "Đăng nhập thành công";
 
     // Thông báo lỗi chung
     public static final String ERROR_OCCURRED = "Đã xảy ra lỗi";
@@ -47,7 +48,13 @@ public class MessageConstants {
     public static final String TOUR_NOT_FOUND = "Không tìm thấy tour";
     public static final String TOUR_EXISTS = "Tour đã tồn tại";
     public static final String IMAGE_UPLOAD_LIMIT = "Giới hạn tải lên ảnh là 5 ảnh cho mỗi tour";
+    public static final String NO_DATA = "Không có dữ liệu";
 
+    //Đăng ký và đăng nhập
+    public static final String USER_REGISTER_SUCCESS = "Đăng ký thành công";
+    public static final String USER_REGISTER_FAILED = "Đăng ký thất bại";
+    public static final String USER_LOGIN_SUCCESS = "Đăng nhập thành công";
+    public static final String USER_LOGIN_FAILED = "Đăng nhập thất bại";
     private MessageConstants() {
         // Không cho phép khởi tạo class này
     }

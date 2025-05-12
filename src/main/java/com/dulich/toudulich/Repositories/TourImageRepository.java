@@ -8,9 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 @Repository
 public interface TourImageRepository extends JpaRepository<TourImage,Integer> {
-    List<TourImage> findByTourModel(Tour tour);
 
-    List<TourImage> findByTourModel_Id(Integer tourId);
+    List<TourImage> findByTourId(Integer tourId);
 
-    int countByTourModel_Id(int tourId);
+    int countByTourId(int tourId);
 }

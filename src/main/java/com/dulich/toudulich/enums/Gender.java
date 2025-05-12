@@ -2,7 +2,8 @@ package com.dulich.toudulich.enums;
 
 public enum Gender {
     NAM,
-    NU;
+    NU,
+    OTHER;
 
     public static Gender fromString(String status) {
         for (Gender gender : Gender.values()) {
