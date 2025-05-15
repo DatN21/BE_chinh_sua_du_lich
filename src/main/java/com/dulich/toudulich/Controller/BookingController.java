@@ -4,10 +4,8 @@ import com.dulich.toudulich.DTO.BookingDTO;
 import com.dulich.toudulich.Entity.Booking;
 import com.dulich.toudulich.Message.MessageConstants;
 import com.dulich.toudulich.Service.iBooking;
-import com.dulich.toudulich.responses.ApiResponse;
-import com.dulich.toudulich.responses.BookingInfoResponse;
-import com.dulich.toudulich.responses.BookingResponse;
-import com.dulich.toudulich.responses.ListBookingResponse;
+import com.dulich.toudulich.exceptions.DataNotFoundException;
+import com.dulich.toudulich.responses.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -100,6 +98,13 @@ public class BookingController {
         }
         return ResponseEntity.ok(bookings);
     }
+    @GetMapping("/bookingDetail/{bookingId}")
+    public ApiResponse<BookingDetailResponse> getBookingDetailByUserId(@PathVariable Integer bookingId){
+        return bookingService.getBookingDetailByBookingId(bookingId);
+    }
 
-
+    @GetMapping("/bookingDetailAndSchedule/{scheduleId}")
+    public ApiResponse<List<BookingDetailResponse>> getBookingDetailAndSchedule(@PathVariable Integer scheduleId){
+        return bookingService.getBookingDetailAndSchedule(scheduleId);
+    }
 }

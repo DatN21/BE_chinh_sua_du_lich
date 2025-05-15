@@ -2,18 +2,22 @@ package com.dulich.toudulich.Service.Impl;
 
 import com.dulich.toudulich.DTO.TourDTO;
 import com.dulich.toudulich.DTO.TourImageDTO;
+import com.dulich.toudulich.Entity.Booking;
 import com.dulich.toudulich.Entity.Tour;
 import com.dulich.toudulich.Entity.TourImage;
+import com.dulich.toudulich.Entity.TourSchedule;
 import com.dulich.toudulich.Message.MessageConstants;
-import com.dulich.toudulich.Repositories.TourImageRepository;
-import com.dulich.toudulich.Repositories.TourRepository;
+import com.dulich.toudulich.Repositories.*;
 import com.dulich.toudulich.Service.iTour;
 import com.dulich.toudulich.enums.Status;
+import com.dulich.toudulich.enums.TourScheduleStatus;
 import com.dulich.toudulich.enums.TourStatus;
 import com.dulich.toudulich.enums.TourType;
 import com.dulich.toudulich.exceptions.DataNotFoundException;
 import com.dulich.toudulich.responses.ApiResponse;
+import com.dulich.toudulich.responses.TourByAgeResponse;
 import com.dulich.toudulich.responses.TourResponse;
+import com.dulich.toudulich.responses.TourScheduleResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -37,7 +41,9 @@ import static com.dulich.toudulich.responses.TourResponse.TourResponseMapper;
 public class TourService implements iTour {
     private final TourRepository tourRepository;
     private final TourImageRepository tourImageRepository;
-
+    private final TourScheduleRepository tourScheduleRepository;
+    private final TourPriceByAgeRepository tourPriceByAgeRepository;
+    private final BookingRepository bookingRepository;
     @Override
     public ApiResponse<TourResponse> createTour(TourDTO tourDTO) throws Exception {
         // Kiểm tra và chuyển đổi enum TourType và Status
@@ -192,7 +198,24 @@ public class TourService implements iTour {
 
     public Page<TourResponse> getToursByStatus(TourStatus status, Pageable pageable) {
         Page<Tour> tours = tourRepository.findByStatus(status, pageable);
-        return tours.map(TourResponse::TourResponseMapper);
+        return tours.map(tour -> {
+            LocalDateTime nearestStartDate = tourScheduleRepository.findNearestStartDateByTourId(tour.getId());
+            return TourResponse.TourResponseMapperActive(
+                    tour.getId(),
+                    tour.getName(),
+                    tour.getCode(),
+                    tour.getDepatureLocation(),
+                    tour.getStatus().name(),
+                    tour.getPrice(),
+                    tour.getDescription(),
+                    tour.getImageHeader(),
+                    tour.getCreatedAt(),
+                    tour.getUpdatedAt(),
+                    nearestStartDate,
+                    tour.getDuration()
+            );
+        });
+
     }
 
     @Override
@@ -209,12 +232,72 @@ public class TourService implements iTour {
 
     @Override
     public TourResponse updateStatus(int id, String status) throws DataNotFoundException {
+        // Tìm tour dựa trên id
         com.dulich.toudulich.Entity.Tour tour = tourRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Tour not found with ID: " + id));
-        Status newStatus = Status.fromString(status);
 
+        // Kiểm tra tất cả các lịch trình (tour schedule) của tour này
+        List<TourSchedule> schedules = tourScheduleRepository.findByTourId(id);
+
+        // Kiểm tra nếu tour có khách đã đặt
+        boolean hasBooking = false;
+        for (TourSchedule schedule : schedules) {
+            // Kiểm tra xem có booking nào với số ghế đã đặt > 0
+            List<Booking> bookings = bookingRepository.findByTourScheduleId(schedule.getId());
+            for (Booking booking : bookings) {
+                if (booking.getBookedSlots() > 0) {
+                    hasBooking = true;
+                    break;
+                }
+            }
+            if (hasBooking) {
+                break;
+            }
+        }
+
+        // Nếu tour có khách đặt, không thể thay đổi trạng thái
+        if (hasBooking) {
+            throw new IllegalStateException("Không thể thay đổi trạng thi tour vì đang có khách đặt.");
+        }
+
+        // Kiểm tra trạng thái mới và thay đổi nếu hợp lệ
+        TourStatus newStatus = TourStatus.fromString(status);
         tour.setStatus(TourStatus.valueOf(newStatus.name()));
+
+        // Lưu và trả về kết quả
         return TourResponseMapper(tourRepository.save(tour));
+    }
+
+
+    @Override
+    public List<TourByAgeResponse> getAllTourByAge() {
+        return tourPriceByAgeRepository.findAll().stream()
+                .map(tourPriceByAge -> TourByAgeResponse.builder()
+                        .id(tourPriceByAge.getId())
+                        .priceRate(tourPriceByAge.getPriceRate())
+                        .describe(tourPriceByAge.getDescribe())
+                        .createdAt(tourPriceByAge.getCreatedAt())
+                        .updatedAt(tourPriceByAge.getUpdatedAt())
+                        .key(tourPriceByAge.getKey())
+                        .header(tourPriceByAge.getHeader())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TourScheduleResponse> getAllTourSchedule(int tourId) {
+        return tourScheduleRepository.findByTourIdAndStatus(tourId, TourScheduleStatus.ACTIVE).stream()
+                .map(tourSchedule -> TourScheduleResponse.builder()
+                        .id(tourSchedule.getId())
+                        .tourId(tourSchedule.getTourId())
+                        .startDate(tourSchedule.getStartDate())
+                        .endDate(tourSchedule.getEndDate())
+                        .availableSlots(tourSchedule.getAvailableSlots())
+                        .bookedSlots(tourSchedule.getBookedSlots())
+                        .totalSlots(tourSchedule.getTotalSlots())
+                        .status(tourSchedule.getStatus().name())
+                        .build())
+                .toList();
     }
 
 

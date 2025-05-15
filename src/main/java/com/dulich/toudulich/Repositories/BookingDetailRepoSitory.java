@@ -10,5 +10,7 @@ import java.util.List;
 @Repository
 public interface BookingDetailRepoSitory extends JpaRepository<BookingDetail, Integer> {
     List<BookingDetail> findByBookingId(int id);
+
+    List<BookingDetail> findByBookingIdIn(List<Integer> collect);
     // Define any custom query methods if needed
 }

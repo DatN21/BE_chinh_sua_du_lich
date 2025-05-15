@@ -48,10 +48,12 @@ public class WebConfig  {
                             .requestMatchers(HttpMethod.DELETE, String.format("%s/bookings/**", apiPrefix)).permitAll()
                             .requestMatchers(HttpMethod.GET, String.format("%s/bookings/user/**", apiPrefix))
                             .hasAnyRole(Role.USER, Role.ADMIN)
+                            .requestMatchers(HttpMethod.GET, String.format("%s/bookings/bookingDetailAndSchedule/**", apiPrefix))
+                            .hasAnyRole(Role.ADMIN)
+                            .requestMatchers(HttpMethod.GET, String.format("%s/bookings/bookingDetail/**", apiPrefix))
+                            .hasAnyRole(Role.USER, Role.ADMIN)
                             .requestMatchers(HttpMethod.GET, String.format("%s/bookings/**", apiPrefix))
                             .hasRole(Role.ADMIN)
-
-
                             // tours endpoints
                             .requestMatchers(HttpMethod.PUT, String.format("%s/tours/status/**", apiPrefix)).hasRole( Role.ADMIN)
                             .requestMatchers(HttpMethod.PUT, String.format("%s/tours/**", apiPrefix)).hasRole( Role.ADMIN)
@@ -59,6 +61,8 @@ public class WebConfig  {
                             .requestMatchers(HttpMethod.DELETE, String.format("%s/tours/**", apiPrefix)).hasRole( Role.ADMIN)
                             .requestMatchers(HttpMethod.GET, String.format("%s/tours/**", apiPrefix)).permitAll()
                             .requestMatchers(HttpMethod.GET, String.format("%s/tours/search/**", apiPrefix)).permitAll()
+                            .requestMatchers(HttpMethod.GET, String.format("%s/tours/allTourAge/**", apiPrefix)).permitAll()
+                            .requestMatchers(HttpMethod.GET, String.format("%s/tours/allTourSchedule/**", apiPrefix)).permitAll()
 
                             .requestMatchers(HttpMethod.GET, String.format("%s/users/full/**", apiPrefix)).hasRole( Role.ADMIN)
                             .requestMatchers(HttpMethod.PUT, String.format("%s/users/admin/", apiPrefix)).hasAnyRole(Role.USER, Role.ADMIN)
