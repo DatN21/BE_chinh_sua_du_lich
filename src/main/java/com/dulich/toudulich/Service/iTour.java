@@ -8,7 +8,9 @@ import com.dulich.toudulich.enums.Status;
 import com.dulich.toudulich.enums.TourStatus;
 import com.dulich.toudulich.exceptions.DataNotFoundException;
 import com.dulich.toudulich.responses.ApiResponse;
+import com.dulich.toudulich.responses.TourByAgeResponse;
 import com.dulich.toudulich.responses.TourResponse;
+import com.dulich.toudulich.responses.TourScheduleResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,4 +40,8 @@ public interface iTour {
     Page<TourResponse> searchToursByKeyword(String keyword, Pageable pageable) ;
 
     TourResponse updateStatus(int id, String status) throws DataNotFoundException;
+
+    List<TourByAgeResponse> getAllTourByAge();
+
+    List<TourScheduleResponse> getAllTourSchedule(int tourId);
 }

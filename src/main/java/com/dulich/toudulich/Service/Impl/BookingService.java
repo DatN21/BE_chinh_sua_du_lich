@@ -7,8 +7,10 @@ import com.dulich.toudulich.Message.MessageConstants;
 import com.dulich.toudulich.Repositories.*;
 import com.dulich.toudulich.Service.iBooking;
 import com.dulich.toudulich.enums.BookingStatus;
+import com.dulich.toudulich.enums.Gender;
 import com.dulich.toudulich.exceptions.DataNotFoundException;
 import com.dulich.toudulich.responses.ApiResponse;
+import com.dulich.toudulich.responses.BookingDetailResponse;
 import com.dulich.toudulich.responses.BookingInfoResponse;
 import com.dulich.toudulich.responses.BookingResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +20,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,6 +62,11 @@ public class BookingService implements iBooking {
                 .status(BookingStatus.PAID)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
+                .fullName(bookingDTO.getFullName())
+                .phone(bookingDTO.getPhone())
+                .email(bookingDTO.getEmail())
+                .address(bookingDTO.getAddress())
+                .note(bookingDTO.getNote())
                 .build();
         bookingRepository.save(booking); // Lưu để lấy ID
 
@@ -69,7 +78,7 @@ public class BookingService implements iBooking {
             TourPriceByAge ageRate = tourPriceByAgeRepository.findById(detailDTO.getAgeGroupId())
                     .orElseThrow(() -> new DataNotFoundException("Age group not found with ID: " + detailDTO.getAgeGroupId()));
 
-            BigDecimal rate = BigDecimal.valueOf(ageRate.getPriceRate());
+            BigDecimal rate = ageRate.getPriceRate();
             BigDecimal personPrice = basePrice.multiply(rate);
             totalPrice = totalPrice.add(personPrice);
 
@@ -77,12 +86,19 @@ public class BookingService implements iBooking {
                     .bookingId(booking.getId())
                     .pricePerPerson(personPrice)
                     .ageGroupId(detailDTO.getAgeGroupId())
-                    .birthDate(detailDTO.getBirthDate())
+                 .birthDate(detailDTO.getBirthDate() != null ? detailDTO.getBirthDate().atStartOfDay() : null)
                     .fullName(detailDTO.getFullName())
                     .gender(detailDTO.getGender())
                     .build();
             bookingDetailRepoSitory.save(bookingDetail);
 
+            paymentRepository.save(Payment.builder()
+                    .bookingId(booking.getId())
+                    .paymentMethod(bookingDTO.getPaymentMethod())
+                    .amount(totalPrice)
+                            .paymentStatus("PAID")
+                            .paymentDate(LocalDateTime.now())
+                    .build());
             // Tạo DTO cho phản hồi
             BookingDetailDTO savedDTO = BookingDetailDTO.builder()
                     .id(bookingDetail.getId())
@@ -134,13 +150,17 @@ public class BookingService implements iBooking {
 
             return BookingInfoResponse.builder()
                     .bookingId(booking.getId())
-                    .customerName(customer != null ? customer.getName() : "Unknown")
-                    .customerEmail(customer != null ? customer.getEmail() : "Unknown")
+                    .customerName(booking.getFullName() != null ? booking.getFullName() : "Unknown")
+                    .customerEmail(booking.getEmail() != null ? booking.getEmail() : "Unknown")
+                    .address(booking.getAddress() != null ? booking.getAddress() : "Unknown")
+                    .phoneTour(booking.getPhone() != null ? booking.getPhone() : "Unknown")
+                    .phoneUser(customer != null ? customer.getPhone() : "Unknown")
                     .tourName(tour != null ? tour.getName() : "Unknown")
                     .createdAt(booking.getCreatedAt())
                     .bookedSlots(booking.getBookedSlots())
                     .status(booking.getStatus())
                     .price(totalPrice)
+                    .note(booking.getNote() != null ? booking.getNote() : "Unknown")
                     .build();
         });
 
@@ -214,12 +234,149 @@ public class BookingService implements iBooking {
                     user != null ? user.getName() : "Unknown",
                     user != null ? user.getPhone() : "Unknown",
                     tour != null ? tour.getName() : "Unknown",
+                    tour != null ? tour.getCode() : null,
                     startDate,
                     totalPrice,
                     paymentMethod
             );
         }).collect(Collectors.toList());
     }
+
+    @Override
+    public ApiResponse<BookingDetailResponse> getBookingDetailByBookingId(Integer bookingId) {
+        try {
+            Optional<Booking> bookingOpt = bookingRepository.findById(bookingId);
+            if (bookingOpt.isEmpty()) {
+                return ApiResponse.withError("Không tìm thấy đơn đặt tour với ID: " + bookingId);
+            }
+            Booking booking = bookingOpt.get();
+
+            Optional<Payment> paymentOpt = paymentRepository.findByBookingId(bookingId)
+                    .stream().findFirst();
+            if (paymentOpt.isEmpty()) {
+                return ApiResponse.withError("Không tìm thấy thanh toán cho booking ID: " + bookingId);
+            }
+            Payment payment = paymentOpt.get();
+
+            Optional<User> customerOpt = userRepository.findById(booking.getCustomerId());
+            if (customerOpt.isEmpty()) {
+                return ApiResponse.withError("Không tìm thấy khách hàng với ID: " + booking.getCustomerId());
+            }
+            User customer = customerOpt.get();
+
+            Optional<TourSchedule> scheduleOpt = tourScheduleRepository.findById(booking.getTourScheduleId());
+            if (scheduleOpt.isEmpty()) {
+                return ApiResponse.withError("Không tìm thấy lịch trình với ID: " + booking.getTourScheduleId());
+            }
+            TourSchedule schedule = scheduleOpt.get();
+
+            Optional<Tour> tourOpt = tourRepository.findById(schedule.getTourId());
+            if (tourOpt.isEmpty()) {
+                return ApiResponse.withError("Không tìm thấy tour với ID: " + schedule.getTourId());
+            }
+
+            List<BookingDetail> details = bookingDetailRepoSitory.findByBookingId(bookingId);
+
+            List<BookingDetailDTO> detailDTOs = details.stream().map(detail -> BookingDetailDTO.builder()
+                    .id(detail.getId())
+                    .bookingId(detail.getBookingId())
+                    .ageGroupId(detail.getAgeGroupId())
+                    .birthDate(LocalDate.from(detail.getBirthDate()))
+                    .fullName(detail.getFullName())
+                    .gender(detail.getGender())
+                    .pricePerPerson(detail.getPricePerPerson())
+                    .build()).collect(Collectors.toList());
+
+            BigDecimal totalPrice = detailDTOs.stream()
+                    .map(BookingDetailDTO::getPricePerPerson)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            BookingDetailResponse response = BookingDetailResponse.fromBooking(
+                    customer.getName(),
+                    customer.getPhone(),
+                    booking.getBookedSlots(),
+                    schedule.getEndDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                    detailDTOs,
+                    schedule.getStartDate(),
+                    schedule.getEndDate(),
+                    booking.getNote(),
+                    payment.getPaymentMethod(),
+                    totalPrice.toString()
+            );
+
+            return ApiResponse.withData(response, MessageConstants.SUCCESS);
+        } catch (Exception ex) {
+            return ApiResponse.withError("Đã xảy ra lỗi khi lấy chi tiết booking: " + ex.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResponse<List<BookingDetailResponse>> getBookingDetailAndSchedule(Integer scheduleId) {
+        // Lấy thông tin lịch trình từ TourSchedule
+        TourSchedule tourSchedule = tourScheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new RuntimeException("Lịch trình không tìm thấy"));
+
+        // Lấy danh sách các booking liên quan đến tourScheduleId
+        List<Booking> bookings = bookingRepository.findByTourScheduleId(scheduleId);
+
+        // Lấy chi tiết booking của các booking
+        List<BookingDetail> bookingDetails = bookingDetailRepository.findByBookingIdIn(
+                bookings.stream().map(Booking::getId).collect(Collectors.toList())
+        );
+
+        // Tạo danh sách tất cả các khách hàng (booking details)
+        List<BookingDetailDTO> bookingDetailDTOs = new ArrayList<>();
+
+        // Duyệt qua từng booking để lấy thông tin chi tiết
+        for (Booking booking : bookings) {
+            // Lọc ra các BookingDetail cho từng Booking
+            List<BookingDetail> details = bookingDetails.stream()
+                    .filter(detail -> detail.getBookingId() == booking.getId())
+                    .collect(Collectors.toList());
+
+            // Tạo DTO cho từng khách hàng
+            for (BookingDetail bookingDetail : details) {
+                // Xử lý khi trường có giá trị null
+                String fullName = bookingDetail.getFullName() != null ? bookingDetail.getFullName() : "Unknown"; // Giá trị mặc định nếu null
+                BigDecimal pricePerPerson = bookingDetail.getPricePerPerson() != null ? bookingDetail.getPricePerPerson() : BigDecimal.ZERO; // Giá trị mặc định nếu null
+                Gender gender = bookingDetail.getGender() != null ? bookingDetail.getGender() : Gender.OTHER; // Giá trị mặc định nếu null
+                // Sử dụng Optional để xử lý null
+                LocalDateTime birthDate = Optional.ofNullable(bookingDetail.getBirthDate())
+                        .orElse(LocalDateTime.now());  // Gán giá trị mặc định nếu null
+                // Không cần kiểm tra nếu bạn xử lý sau
+                Integer ageGroupId = Optional.of(bookingDetail.getAgeGroupId()).orElse(0); // Giá trị mặc định nếu null// Giá trị mặc định nếu null
+
+                // Thêm BookingDetailDTO vào danh sách
+                bookingDetailDTOs.add(new BookingDetailDTO(
+                        fullName,
+                        pricePerPerson,
+                        gender,
+                        birthDate,
+                        ageGroupId
+                ));
+            }
+        }
+
+        // Tạo response chứa tất cả các booking details
+        List<BookingDetailResponse> response = bookings.stream()
+                .map(booking -> BookingDetailResponse.fromBooking(
+                        booking.getFullName(),
+                        booking.getPhone(),
+                        booking.getBookedSlots(),
+                        tourSchedule.getEndDate().toString(),  // Thêm ngày kết thúc tour
+                        bookingDetailDTOs,  // List các booking detail
+                        tourSchedule.getStartDate(),
+                        tourSchedule.getEndDate(),
+                        booking.getNote(),
+                        "Cash",  // Phương thức thanh toán (hoặc có thể tùy chỉnh)
+                        String.valueOf(booking.getBookedSlots())
+                ))
+                .collect(Collectors.toList());
+
+        return  ApiResponse.withData(response, MessageConstants.SUCCESS); // Trả về danh sách booking detail response
+    }
+
+
 
 
 }

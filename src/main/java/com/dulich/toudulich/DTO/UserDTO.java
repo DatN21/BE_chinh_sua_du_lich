@@ -5,6 +5,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,6 +14,7 @@ import lombok.*;
 @Setter
 @Builder
 public class UserDTO {
+    private int id ;
     private String name ;
 
     private String password ;

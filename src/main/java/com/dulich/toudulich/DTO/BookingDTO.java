@@ -36,4 +36,10 @@ public class BookingDTO {
 
     BigDecimal totalPrice;
 
+    String fullName;
+    String phone;
+    String email;
+    String address;
+    String paymentMethod;
+    String note;
 }
