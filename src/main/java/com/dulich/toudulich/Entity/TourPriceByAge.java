@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -23,7 +24,7 @@ public class TourPriceByAge {
     String describe;
 
     @Column(name = "price_rate")
-    float priceRate;
+    int priceRate;
 
     @Column(name = "created_at")
     LocalDateTime createdAt;

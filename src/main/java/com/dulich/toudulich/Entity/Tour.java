@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -31,7 +32,7 @@ public class Tour {
     String description;
 
     @Column(name = "price", nullable = false)
-    float price;
+    BigDecimal price;
 
     @Column(name = "created_at")
     LocalDateTime createdAt;
@@ -44,7 +45,7 @@ public class Tour {
     private TourStatus status;
 
     @Column(name = "duration", nullable = false)
-    String duration;
+    int duration;
 
     @Column(name = "depature_location", nullable = false)
     String depatureLocation;

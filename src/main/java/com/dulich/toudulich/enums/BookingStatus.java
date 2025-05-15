@@ -1,7 +1,7 @@
 package com.dulich.toudulich.enums;
 
 public enum BookingStatus {
-    PENDING,
+    PAID,
     CONFIRMED,
     CANCELLED,
     COMPLETED,

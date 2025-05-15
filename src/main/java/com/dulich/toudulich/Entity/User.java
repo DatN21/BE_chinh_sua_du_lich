@@ -31,6 +31,7 @@ public class User {
     @Column(name = "phone",length = 20,nullable = false)
     private String phone ;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status",length = 50)
     UserStatus  status ;
 
@@ -43,6 +44,7 @@ public class User {
     @Column(name = "name")
     private String name ;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "gender")
     private Gender gender;
 

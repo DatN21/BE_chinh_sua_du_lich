@@ -14,8 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @Table(name = "tour_image")
 public class TourImage {
-    public static final int
-            MAXIMUM_IMAGE_P_PRODUCT = 10;
+    public static final int MAXIMUM_IMAGE_P_PRODUCT = 10;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;

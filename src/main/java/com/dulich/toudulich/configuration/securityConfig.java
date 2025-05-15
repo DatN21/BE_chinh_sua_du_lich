@@ -23,7 +23,6 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @RequiredArgsConstructor
-@EnableWebSecurity
 public class securityConfig {
     private final UserRepository userRepository ;
     @Autowired

@@ -13,6 +13,7 @@ import com.dulich.toudulich.responses.LoginResponse;
 import com.dulich.toudulich.responses.UserResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,7 +29,7 @@ public interface iUser {
 
     User getUserById(int id);
 
-    Page<UserResponse> getUserResponse(PageRequest pageRequest);
+    ApiResponse<Page<UserResponse>> getUserResponse(Pageable pageable);
 
     void deleteUser(int id) ;
 
