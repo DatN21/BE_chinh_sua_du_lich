@@ -24,11 +24,17 @@ public class TourPriceByAge {
     String describe;
 
     @Column(name = "price_rate")
-    int priceRate;
+    BigDecimal priceRate;
 
     @Column(name = "created_at")
     LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     LocalDateTime updatedAt;
+
+    @Column(name = "key")
+    String key;
+
+    @Column(name = "header")
+    String header;
 }

@@ -212,11 +212,32 @@ public class UserService implements iUser {
         existingUser.setPhone(userDTOUpdate.getPhone());
         existingUser.setName(userDTOUpdate.getName());
         existingUser.setEmail(userDTOUpdate.getEmail());
-        existingUser.setGender(Gender.valueOf(userDTOUpdate.getGender()));
+        existingUser.setGender(parseGender(userDTOUpdate.getGender()));
         existingUser.setAddress(userDTOUpdate.getAddress());
         userRepository.save(existingUser) ;
         return withData(UserMapper.toDTO(existingUser), MessageConstants.UPDATED_SUCCESSFULLY);
     }
 
+    private Gender parseGender(String genderStr) {
+        if (genderStr == null) {
+            return Gender.OTHER;
+        }
+        String normalized = removeVietnameseTones(genderStr.trim());
+
+        switch (normalized) {
+            case "nam":
+                return Gender.NAM;
+            case "nu":
+                return Gender.NU;
+            default:
+                return Gender.OTHER;
+        }
+    }
+
+    public static String removeVietnameseTones(String str) {
+        str = java.text.Normalizer.normalize(str, java.text.Normalizer.Form.NFD);
+        str = str.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+        return str.toLowerCase();
+    }
 
 }

@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 @Builder
 public class BookingInfoResponse {
     private int bookingId;
+    private String phoneUser;
+    private String phoneTour;
+    private String address;
     private String customerName;
     private String customerEmail;
     private String tourName;
@@ -18,4 +21,5 @@ public class BookingInfoResponse {
     private int bookedSlots;
     private BookingStatus status;
     BigDecimal price;
+    private String note;
 }

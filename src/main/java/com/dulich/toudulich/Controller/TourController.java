@@ -10,9 +10,7 @@ import com.dulich.toudulich.enums.Status;
 import com.dulich.toudulich.enums.TourDiscountStatus;
 import com.dulich.toudulich.enums.TourStatus;
 import com.dulich.toudulich.exceptions.DataNotFoundException;
-import com.dulich.toudulich.responses.ApiResponse;
-import com.dulich.toudulich.responses.ListTourResponse;
-import com.dulich.toudulich.responses.TourResponse;
+import com.dulich.toudulich.responses.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -193,5 +191,20 @@ public class TourController {
             return ApiResponse.withError(MessageConstants.TOUR_NOT_FOUND);
         }
     }
+    @GetMapping("/allTourAge")
+    public ApiResponse<List<TourByAgeResponse>> getAllTourByAge(
+            Pageable pageable
+    ){
+        List<TourByAgeResponse> tourResponses = tourService.getAllTourByAge();
+        return ApiResponse.withData(tourResponses, MessageConstants.SUCCESS);
+    }
 
+    @GetMapping("/allTourSchedule/{tourId}")
+    public ApiResponse<List<TourScheduleResponse>> getAllTourSchedule(
+            @PathVariable("tourId") int tourId,
+            Pageable pageable
+    ){
+        List<TourScheduleResponse> tourResponses = tourService.getAllTourSchedule(tourId);
+        return ApiResponse.withData(tourResponses, MessageConstants.SUCCESS);
+    }
 }

@@ -13,4 +13,5 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     Page<Booking> findAll (Pageable pePageable);// Phân trang
     List<Booking> findByCustomerId(Integer userId);
 
+    List<Booking> findByTourScheduleId(int id);
 }

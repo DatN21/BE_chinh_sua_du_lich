@@ -29,6 +29,7 @@ public class BookingResponse{
     @JsonProperty("tour_name")
     String tourName;
 
+    String code;
     float amount;
 
     @JsonProperty("start_date")
@@ -51,6 +52,7 @@ public class BookingResponse{
                                               String fullName,
                                               String phoneNumber,
                                               String tourName,
+                                              String code,
                                               LocalDateTime startDate,
                                               BigDecimal totalPrice,
                                               String paymentMethod) {
@@ -60,6 +62,7 @@ public class BookingResponse{
                 .fullName(fullName)
                 .phoneNumber(phoneNumber)
                 .tourName(tourName)
+                .code(code)
                 .amount(booking.getBookedSlots())
                 .startDate(startDate)
                 .totalPrice(totalPrice)

@@ -18,12 +18,12 @@ spring:
     show-sql: true
   web:
     resources:
-      static-locations: file:///D:/a/uploads
+      static-locations: file:///D:/DatTourEDIT_TN/uploads/
 api:
   prefix: api/v1
 
 app:
-  upload-dir: D:/a/uploads
+  upload-dir: D:/DatTourEDIT_TN/uploads/
 
 
 jwt:
