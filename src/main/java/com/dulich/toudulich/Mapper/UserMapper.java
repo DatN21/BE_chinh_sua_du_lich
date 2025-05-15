@@ -6,6 +6,7 @@ import com.dulich.toudulich.Entity.User;
 public class UserMapper {
     public static UserDTO toDTO(User user) {
         return UserDTO.builder()
+                .id(user.getId())
                 .name(user.getName())
                 .phone(user.getPhone())
                 .email(user.getEmail())

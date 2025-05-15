@@ -40,4 +40,18 @@ public class Booking {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     BookingStatus status;
+
+    @Column(name = "note")
+    String note;
+
+    @Column(name = "full_name", nullable = false)
+    String fullName;
+
+    @Column(name = "phone", nullable = false)
+    String phone;
+
+    @Column(name = "email")
+    String email;
+    @Column(name = "address")
+    String address;
 }
